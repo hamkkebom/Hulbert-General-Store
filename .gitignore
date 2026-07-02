@@ -15,3 +15,4 @@ Thumbs.db
 
 # 생성 아티팩트(사용자 전달용 독립 HTML)
 viewer/헐버트-문서뷰어.html
+_site/

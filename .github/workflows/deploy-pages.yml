@@ -1,4 +1,4 @@
-name: Deploy viewer to GitHub Pages
+name: Deploy site + viewer to GitHub Pages
 
 on:
   push:
@@ -23,14 +23,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Build viewer (docs → viewer/index.html)
+        run: python3 viewer/build.py
+      - name: Build site (docs → _site/, viewer 동봉)
+        run: python3 site/build_site.py
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
-      - name: Upload artifact (viewer/)
+      - name: Upload artifact (_site/)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./viewer
+          path: ./_site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

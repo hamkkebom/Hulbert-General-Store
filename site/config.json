@@ -1,0 +1,13 @@
+{
+  "_comment": "실데이터 단일 변수 파일 — 값 확정 시 여기 한 곳만 수정하면 전 페이지에 반영됩니다 (docs/기술-사양.md §4). null = 미확정(TBD, 대체 문구 렌더).",
+  "site_name": "헐버트작가촌",
+  "tagline": "잃을 걱정 없이, 하고 싶은 창작만.",
+  "instagram": null,
+  "apply_form_url": null,
+  "contact_email": null,
+  "address": null,
+  "address_fallback": "경복궁 옆 서촌 (상세 주소 준비 중)",
+  "open_hours": null,
+  "open_hours_fallback": "오픈 준비 중",
+  "base_url": "https://dokkaebimarketing1-lang.github.io/Hulbert-General-Store"
+}
