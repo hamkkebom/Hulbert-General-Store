@@ -85,6 +85,21 @@ def transform(html):
 # ──────────────────────────── 공통 레이아웃 ────────────────────────────
 FONT = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
 
+# 전역 인터랙션: 헤더 그림자(스크롤) + 스크롤 리빌(reduced-motion 존중, JS 없으면 전체 표시)
+GLOBAL_JS = """<script>
+(function(){
+  var top=document.querySelector('.top');
+  var onScroll=function(){ if(top) top.classList.toggle('scrolled', window.scrollY>4); };
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  var els=[].slice.call(document.querySelectorAll('.reveal'));
+  var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(rm||!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
+  var io=new IntersectionObserver(function(en){en.forEach(function(x){
+    if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});},{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){io.observe(e);});
+})();
+</script>"""
+
 # 작가들 장르 필터 (JS 없이도 전체 표시 — 프로그레시브 인핸스먼트)
 MAKERS_JS = """<script>
 (function(){
@@ -115,6 +130,7 @@ def layout(slug, title, desc, body, root):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
+<script>document.documentElement.className+=' js';</script>
 <title>{htmllib.escape(title)}</title>
 <meta name="description" content="{htmllib.escape(desc)}">
 <link rel="canonical" href="{canonical}">
@@ -138,6 +154,7 @@ def layout(slug, title, desc, body, root):
 </header>
 <div class="mnav"><nav>{nav}<a href="{root}apply/">합류하기</a></nav></div>
 {body}
+{GLOBAL_JS}
 {MAKERS_JS if slug == 'makers' else ''}
 <footer class="foot">
   <p class="f-brand">헐버트작가촌 <span class="sep">·</span> 경복궁 옆 서촌 한옥</p>
@@ -164,16 +181,29 @@ def home_body(root):
     return f"""
 <main class="home">
 
-<section class="hero">
-  <p class="eyebrow">경복궁 옆 서촌 한옥 · 함께할 작가를 찾습니다</p>
-  <h1>잃을 걱정 없이,<br>하고 싶은 창작만.</h1>
-  <p class="lede">입점비도, 자릿세도 없습니다. 안 팔린 달엔 한 푼도 내지 않습니다.<br>
-  그리고 끝내 — <strong>함께 회사의 주인이 됩니다.</strong></p>
-  <p class="hero-cta"><a class="cta-btn" href="{root}apply/">합류하기</a>
-  <a class="ghost-btn" href="#why">3분 만에 이해하기 ↓</a></p>
+<section class="hero-band reveal">
+  <div class="hero">
+    <p class="eyebrow"><span class="dot-ac"></span>경복궁 옆 서촌 한옥 · 함께할 작가를 찾습니다</p>
+    <h1>잃을 걱정 없이,<br>하고 싶은 창작만.</h1>
+    <p class="lede">입점비도, 자릿세도 없습니다. 안 팔린 달엔 한 푼도 내지 않습니다.<br>
+    그리고 끝내 — <strong>함께 회사의 주인이 됩니다.</strong></p>
+    <p class="hero-cta"><a class="cta-btn big" href="{root}apply/">합류하기</a>
+    <a class="ghost-btn" href="#why">3분 만에 이해하기 ↓</a></p>
+  </div>
+  <svg class="eaves" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,90 L0,54 Q720,-24 1440,54 L1440,90 Z" fill="var(--card)"/>
+    <path d="M0,54 Q720,-24 1440,54" fill="none" stroke="var(--dancheong)" stroke-width="2" opacity=".5"/>
+  </svg>
 </section>
 
-<section class="empathy">
+<section class="stats reveal">
+  <div class="stat"><b>0<span class="won">원</span></b><p>입점비</p></div>
+  <div class="stat"><b>0<span class="won">원</span></b><p>매달 자릿세</p></div>
+  <div class="stat"><b>0<span class="won">원</span></b><p>안 팔린 달</p></div>
+  <div class="stat accent"><b>3<span class="won">단계</span></b><p>끝내 함께 주인</p></div>
+</section>
+
+<section class="empathy reveal">
   <h2>위탁 매장에 한 번쯤 데여보셨죠?</h2>
   <ul class="pain">
     <li>💸 입점비 수십만 원</li>
@@ -184,7 +214,7 @@ def home_body(root):
   우리는 그 마음을 알기에, <strong>규칙을 정반대로 짰습니다.</strong></p>
 </section>
 
-<section class="who">
+<section class="who band-soft reveal">
   <h2>한글을 사랑한 '헐버트'처럼, 작가를 뒤에서 받칩니다</h2>
   <p>이름 <strong>헐버트</strong>는 한글을 사랑하고 한국을 도운 미국인 <strong>호머 헐버트 박사</strong>에서 왔습니다.<br>
   앞에 나서지 않고 뒤에서 받친 그 사람처럼 — 회사는 주인공이 아니라 <strong>작가를 받치는 조력자</strong>입니다.</p>
@@ -192,7 +222,7 @@ def home_body(root):
   <p class="more"><a href="{root}about/">우리 이야기 더 보기 →</a></p>
 </section>
 
-<section class="benefits" id="why">
+<section class="benefits reveal" id="why">
   <h2>왜 합류하면 좋은가</h2>
   <div class="cards3">
     <div class="card"><div class="ic">💸</div><h3>입점비 0원</h3><p>가격은 처음부터 끝까지 <em>작가님이</em> 책정합니다. 우리는 손대지 않습니다.</p></div>
@@ -201,7 +231,7 @@ def home_body(root):
   </div>
 </section>
 
-<section class="money">
+<section class="money band-ink reveal">
   <h2>돈 이야기, 가장 쉽게</h2>
   <p class="money-head">수수료가 '회사 주머니'로 가지 않습니다</p>
   <div class="flow">
@@ -218,7 +248,7 @@ def home_body(root):
   <p class="oneline">한 줄 요약 — <strong>떼이는 게 아니라, 한옥을 다 함께 공동구매하는 것.</strong></p>
 </section>
 
-<section class="journey">
+<section class="journey band-soft reveal">
   <h2>합류 여정 — 끝내 '함께 주인'</h2>
   <p>작가로 시작해, 동료로 일하고, 공동 주인으로. <strong>오를지 말지는 선택입니다.</strong></p>
   <ol class="timeline">
@@ -228,13 +258,16 @@ def home_body(root):
   </ol>
 </section>
 
-<section class="what">
+<section class="what reveal">
   <h2>장르도, 소재도 묻지 않습니다 — 한옥에 어울리면 뭐든</h2>
-  <p>도자·유리·금속, 가죽·직물·주얼리, 캔들·디퓨저, 일러스트·지류까지.<br>
-  기준은 하나 — <strong>"한옥 마루 위에 자연스럽게 어울리는가."</strong></p>
+  <ul class="cat-chips">
+    <li>도자·유리·금속</li><li>가죽·직물·주얼리</li><li>캔들·디퓨저·리빙</li>
+    <li>일러스트·지류·문구</li><li>그리고 무엇이든</li>
+  </ul>
+  <p class="oneline">기준은 하나 — <strong>"한옥 마루 위에 자연스럽게 어울리는가."</strong></p>
 </section>
 
-<section class="voices">
+<section class="voices band-soft reveal">
   <h2>동료 이야기 <span class="ex-badge">예시</span></h2>
   <p class="muted">아직 첫 동료를 기다리는 중입니다 — 아래는 톤을 보여드리는 예시이며, 실제 작가의 목소리로 바뀝니다.</p>
   <div class="cards2">
@@ -243,7 +276,7 @@ def home_body(root):
   </div>
 </section>
 
-<section class="honest">
+<section class="honest reveal">
   <h2>솔직하게 — 이런 단점·각오가 있어요</h2>
   <p>달콤한 혜택만 말하지 않겠습니다. 정직하게, <strong>단점과 각오</strong>도 먼저 보여드립니다.</p>
   <div class="cards3 sober">
@@ -254,13 +287,13 @@ def home_body(root):
   <p class="oneline"><strong>이 각오를 기꺼이 질 분과 함께합니다.</strong> 단점까지 알고도 오신다면, 진짜 동료입니다.</p>
 </section>
 
-<section class="faq">
+<section class="faq band-soft reveal">
   <h2>자주 묻는 질문</h2>
   {faq_html}
   <p class="more"><a href="{root}contact/">더 많은 질문과 답 →</a></p>
 </section>
 
-<section class="join">
+<section class="join reveal">
   <h2>거창한 서류는 없습니다. 세 가지만 보내주세요.</h2>
   <ol class="three">
     <li>① 작품 사진 3~5장</li><li>② "당신의 꿈" 한 문장</li><li>③ 불리고 싶은 한글 이름</li>
