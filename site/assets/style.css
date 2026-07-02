@@ -1,8 +1,14 @@
-/* 헐버트작가촌 — 디자인 정본: docs/디자인-가이드.md (한지 위에 먹으로 쓰고, 단청 적은 도장 한 점처럼) */
+/* 헐버트작가촌 — 디자인 정본: docs/디자인-가이드.md (한지 위에 먹으로 쓰고, 단청 적은 도장 한 점처럼)
+   구조 참고: Airbnb DLS (getdesign.md) — 카드 그리드·필터 칩·12px radius·부드러운 hover 엘리베이션·넉넉한 8px 간격.
+   색·질감은 한옥 팔레트 유지, 구조·컴포넌트 규격만 차용. */
 :root{
   --paper:#ECE4D5; --card:#FFFDF9; --ink:#262220; --muted:#7C7264;
   --line:#E3DAC9; --dancheong:#A63B2A; --celadon:#2F6B63; --accent-soft:#F3E6DC;
-  --quote-bg:#FAF5EC; --reader:744px;
+  --quote-bg:#FAF5EC; --reader:744px; --wide:1120px;
+  /* Airbnb 구조 토큰 */
+  --r-card:12px; --r-pill:999px; --r-btn:10px;
+  --sh-1:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.06);
+  --sh-2:0 8px 28px rgba(60,40,20,.14);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -68,8 +74,9 @@ span.tbd:empty::after{content:"준비 중"}
   border-radius:12px;padding:12px 28px}
 .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
 .cards2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;
-  box-shadow:0 6px 22px rgba(60,40,20,.07)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:24px;
+  box-shadow:var(--sh-1);transition:box-shadow .18s,transform .18s}
+.card:hover{box-shadow:var(--sh-2);transform:translateY(-2px)}
 .card .ic{font-size:1.8rem;margin-bottom:6px}
 .card h3{margin:.2em 0 .4em}
 .card p{margin:0;font-size:.95rem}
@@ -134,19 +141,31 @@ span.tbd:empty::after{content:"준비 중"}
 .photo-slot figcaption{color:var(--muted);font-size:.86rem;max-width:480px;margin:0 auto}
 .photo-slot.sq{padding:64px 16px;margin:0 0 14px}
 
-/* ── 작가 카드 ── */
-.mk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:920px;margin:36px auto;padding:0 24px}
-.mk-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;
-  box-shadow:0 6px 22px rgba(60,40,20,.07)}
-.mk-genre{color:var(--celadon);font-weight:700;font-size:.85rem;margin:4px 0 2px}
-.mk-card h3{margin:.1em 0 .4em;font-size:1.25rem}
-.mk-dream{font-weight:700}
-.mk-work{font-size:.93rem;color:#4a4239}
-.mk-quote{font-size:.93rem;color:var(--muted);margin-bottom:0}
-.p-makers .page,.p-makers main{max-width:none;padding:0}
-.p-makers .page-head,.p-makers .prose{max-width:var(--reader);margin:0 auto;padding:0 24px}
-.p-makers .page-head{padding-top:48px;margin-bottom:20px}
-.p-makers .join{max-width:920px;padding:56px 24px}
+/* ── 작가 카드 (Airbnb 리스팅 그리드 구조) ── */
+.p-makers main{max-width:none;padding:0}
+.p-makers .page-head,.p-makers .prose,.mk-filter,.mk-grid{max-width:var(--wide);margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px}
+.p-makers .page-head{padding-top:48px;margin-bottom:12px}
+/* 필터 칩 행 (가로 스크롤, sticky) */
+.mk-filter{display:flex;gap:10px;overflow-x:auto;padding-top:14px;padding-bottom:14px;margin:8px auto 4px;
+  position:sticky;top:57px;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mk-filter::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;background:var(--card);border:1px solid var(--line);border-radius:var(--r-pill);
+  padding:8px 16px;font-size:.88rem;font-weight:600;color:var(--ink);cursor:pointer;transition:.12s;white-space:nowrap}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.mk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px 20px;margin-top:24px;margin-bottom:8px}
+.mk-card{background:none;border:none;border-radius:0;padding:0;box-shadow:none}
+.mk-card .photo-slot{border-radius:var(--r-card);margin:0 0 12px;aspect-ratio:1/1;padding:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.18s}
+.mk-card:hover .photo-slot{box-shadow:var(--sh-2);transform:translateY(-2px)}
+.mk-genre{color:var(--celadon);font-weight:700;font-size:.8rem;margin:0 0 2px}
+.mk-card h3{margin:.1em 0 .3em;font-size:1.1rem}
+.mk-dream{font-weight:700;font-size:.95rem;margin:.2em 0}
+.mk-work{font-size:.88rem;color:#4a4239;margin:.2em 0}
+.mk-quote{font-size:.88rem;color:var(--muted);margin:.3em 0 0}
+.mk-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px}
+.p-makers .join{max-width:var(--wide);padding:56px 24px}
 
 /* ── 푸터 · sticky CTA ── */
 .foot{border-top:1px solid var(--line);text-align:center;padding:48px 24px 120px;color:var(--muted);font-size:.88rem}

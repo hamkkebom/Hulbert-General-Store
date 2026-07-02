@@ -85,6 +85,25 @@ def transform(html):
 # ──────────────────────────── 공통 레이아웃 ────────────────────────────
 FONT = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
 
+# 작가들 장르 필터 (JS 없이도 전체 표시 — 프로그레시브 인핸스먼트)
+MAKERS_JS = """<script>
+(function(){
+  var chips=[].slice.call(document.querySelectorAll('.mk-filter .chip'));
+  var cards=[].slice.call(document.querySelectorAll('.mk-card'));
+  var empty=document.querySelector('.mk-empty');
+  chips.forEach(function(c){c.addEventListener('click',function(){
+    var cat=c.dataset.cat;
+    chips.forEach(function(x){x.setAttribute('aria-pressed', x===c?'true':'false');});
+    var shown=0;
+    cards.forEach(function(card){
+      var ok=(cat==='전체')||card.dataset.cat===cat;
+      card.hidden=!ok; if(ok)shown++;
+    });
+    if(empty)empty.hidden=shown>0;
+  });});
+})();
+</script>"""
+
 def layout(slug, title, desc, body, root):
     active = lambda s: ' class="on"' if s == slug else ""
     nav = "".join(f'<a href="{root}{s}/"{active(s)}>{label}</a>' for s, label in NAV)
@@ -119,6 +138,7 @@ def layout(slug, title, desc, body, root):
 </header>
 <div class="mnav"><nav>{nav}<a href="{root}apply/">합류하기</a></nav></div>
 {body}
+{MAKERS_JS if slug == 'makers' else ''}
 <footer class="foot">
   <p class="f-brand">헐버트작가촌 <span class="sep">·</span> 경복궁 옆 서촌 한옥</p>
   <p class="f-line">잃을 걱정 없이, 하고 싶은 창작만 — 잘 팔리면 복지로 보답하고, 끝내 함께 주인이 된다.</p>
@@ -253,30 +273,35 @@ def home_body(root):
 
 # ──────────────────────────── 작가들 (정본: docs/pages/작가들.md — 카드 4개는 가상 예시) ────────────────────────────
 MAKERS = [
-    ("도예", "온새미로", "가르지 않고, 있는 그대로 — 흙의 온기를 식탁마다 올려놓는 것.",
+    ("도예", "도자·유리·금속", "온새미로", "가르지 않고, 있는 그대로 — 흙의 온기를 식탁마다 올려놓는 것.",
      "민무늬 백자 찻잔 — 손에 쥐면 따뜻한, 군더더기 없는 일상 그릇.",
      "입점비 걱정이 없으니, 팔릴 물건이 아니라 만들고 싶은 걸 만들게 됐어요."),
-    ("가죽", "봄해", "봄볕처럼 오래 곁에 머무는, 길들일수록 예뻐지는 물건을 만드는 것.",
+    ("가죽", "가죽·직물·주얼리", "봄해", "봄볕처럼 오래 곁에 머무는, 길들일수록 예뻐지는 물건을 만드는 것.",
      "한 장 가죽 카드지갑 — 바느질 한 땀까지 손으로, 쓸수록 윤이 나는.",
      "안 팔린 달엔 정말 0원이더라고요. 그제야 마음 놓고 실험했어요."),
-    ("향·리빙", "달보드레", "달처럼 은은한 향으로, 누군가의 저녁을 한 뼘 더 포근하게.",
+    ("향·리빙", "캔들·디퓨저·리빙", "달보드레", "달처럼 은은한 향으로, 누군가의 저녁을 한 뼘 더 포근하게.",
      "서촌 골목 소이캔들 — 한옥 마당 냄새를 닮은, 과하지 않은 향.",
      "한옥에 어울리는 향이 뭘까 고민하다 보니, 제 작업이 더 단단해졌어요."),
-    ("일러스트·지류", "그린나래", "그린 듯한 날개로 — 서촌의 풍경을 종이 위에 오래 남기는 것.",
+    ("일러스트·지류", "일러스트·지류·문구", "그린나래", "그린 듯한 날개로 — 서촌의 풍경을 종이 위에 오래 남기는 것.",
      "인왕산 사계 엽서 세트 — 계절마다 다른 동네를 손으로 그린 네 장.",
      "가격을 제가 정한다는 게 처음엔 낯설었는데, 이제 제 작품값을 제가 책임져요."),
 ]
+# 필터 칩 (docs/pages/작가들.md §4 — '장르 불문'이 원칙, 가르기 아니라 찾기 편하라고)
+CHIPS = ["전체", "도자·유리·금속", "가죽·직물·주얼리", "캔들·디퓨저·리빙", "일러스트·지류·문구", "기타"]
 
 def makers_body(root):
+    chips = "".join(
+        f'<button class="chip" data-cat="{c}" aria-pressed="{"true" if c=="전체" else "false"}">{c}</button>'
+        for c in CHIPS)
     cards = "".join(f"""
-    <article class="mk-card">
+    <article class="mk-card" data-cat="{cat}">
       <div class="photo-slot sq"><span class="ps-icon">📷</span><figcaption>작품 사진 자리</figcaption></div>
       <p class="mk-genre">[{g}] <span class="ex-badge">예시</span></p>
       <h3>{name}</h3>
       <p class="mk-dream">✦ 꿈: "{dream}"</p>
       <p class="mk-work">대표작 · {work}</p>
       <p class="mk-quote">💬 "{quote}"</p>
-    </article>""" for g, name, dream, work, quote in MAKERS)
+    </article>""" for g, cat, name, dream, work, quote in MAKERS)
     return f"""
 <main class="page">
 <header class="page-head">
@@ -286,10 +311,12 @@ def makers_body(root):
 <div class="prose">
   <p>헐버트작가촌은 나이도 학벌도 묻지 않습니다. 가장 먼저 묻는 건 하나예요 — <strong>"당신의 꿈은 무엇인가요?"</strong><br>
   그 꿈을 담은 한글 이름으로 서로를 부르고, 경복궁 옆 서촌 한옥 마루 위에 각자의 작품을 나란히 올립니다.</p>
-  <p>아래는 <strong>앞으로 이곳을 채워 갈 동료의 모습</strong>입니다. 장르도 손맛도 제각각이지만, "만들고 싶은 걸 만든다"는 마음은 같습니다. 다음 빈자리의 주인공이 바로 당신일 수 있어요.</p>
-  <div class="notice">📌 지금 보이는 카드는 <strong>분위기를 보여주기 위한 가상 예시</strong>입니다. 첫 작가들이 입점하면 진짜 얼굴로 바뀝니다.</div>
+  <div class="notice">📌 지금 보이는 카드는 <strong>분위기를 보여주기 위한 가상 예시</strong>입니다. 첫 작가들이 입점하면 진짜 얼굴로 바뀝니다. (장르 필터는 '가르기'가 아니라 <strong>찾기 편하라고</strong> 두는 장치예요 — 한옥에 어울리면 장르 불문입니다.)</div>
 </div>
-<div class="mk-grid">{cards}</div>
+<div class="mk-filter" role="group" aria-label="장르 필터">{chips}</div>
+<div class="mk-grid" id="mkGrid">{cards}
+  <p class="mk-empty" hidden>해당 장르의 동료는 아직 준비 중이에요. 다음 주인공이 당신일 수 있어요.</p>
+</div>
 <section class="join">
   <h2>다음 빈 카드의 주인공은, 당신입니다.</h2>
   <p>여기 있는 동료들도 처음엔 작품 사진 몇 장과 "꿈" 한 문장으로 시작했어요.<br>
