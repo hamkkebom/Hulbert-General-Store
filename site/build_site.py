@@ -34,9 +34,13 @@ PAGES = [
     ("makers",  "함께하는 작가들 — 헐버트작가촌", "같은 꿈을 가진 동료들. 다음 빈자리의 주인공은 당신일 수 있어요.", None),
     ("news",    "소식 · 공지 — 헐버트작가촌", "작가 모집·행사·로테이션 소식을 숨김 없이 투명하게 전합니다.", "docs/pages/소식.md"),
     ("contact", "문의 · FAQ — 헐버트작가촌", "궁금한 건 무엇이든. 수수료·퇴점·정산까지 FAQ에 정직하게 담았습니다.", "docs/pages/문의.md"),
+    ("guide",   "작가 가이드 — 헐버트작가촌", "지원부터 정산·성장까지, 어떻게 하는지 단계별로 안내합니다.", "docs/작가-가이드.md"),
+    ("academy", "헐버트 아카데미 — 헐버트작가촌", "작품 사진·가격 책정·SNS·세무·성장까지 — 작가로 더 잘 살아남는 법.", "docs/작가촌-아카데미.md"),
+    ("magazine", "작가 이야기 — 헐버트작가촌", "작품 너머의 사람. 헐버트·서촌 이야기와 작가 인터뷰를 기록합니다.", "docs/작가촌-매거진.md"),
 ]
 NAV = [("about", "소개"), ("space", "공간"), ("makers", "작가들"),
-       ("news", "소식"), ("policy", "운영정책"), ("contact", "문의")]
+       ("guide", "가이드"), ("academy", "아카데미"), ("magazine", "이야기"),
+       ("news", "소식"), ("contact", "문의")]
 
 # ──────────────────────────── md → HTML 변환 ────────────────────────────
 def render_md(path):
@@ -47,8 +51,10 @@ def render_md(path):
     page_h1 = re.sub(r"\s*\(/[a-z]+\)\s*$", "", m.group(1)).strip() if m else ""
     first_hr = text.find("\n---\n")
     body = text[first_hr + 5:] if first_hr != -1 else text
-    # 운영자용 섹션 제거(게시 전 제거 지시 준수)
-    body = re.split(r"\n## 🛠 .*", body)[0]
+    # 운영자용·내부 섹션 제거(공개 페이지엔 노출 금지) — 가장 먼저 나오는 지점에서 자름
+    body = re.split(r"\n#{2,3} [^\n]*🛠", body)[0]
+    body = re.split(r"\n#{2,3} [^\n]*운영자", body)[0]
+    body = re.split(r"\n#{2,3} [^\n]*게시 가이드", body)[0]
     body = re.split(r"\n## ④ 운영 가이드.*", body)[0]
     md = markdown.Markdown(extensions=["extra", "sane_lists"])
     html = md.convert(body)
@@ -66,7 +72,9 @@ def transform(html):
     # 문서 간 .md 링크 → 사이트 경로
     link_map = {"합류하기": "../apply/", "문의": "../contact/", "소개": "../about/",
                 "공간소개": "../space/", "운영정책": "../policy/", "작가들": "../makers/",
-                "소식": "../news/", "작가-운영정책": "../policy/"}
+                "소식": "../news/", "작가-운영정책": "../policy/", "작가-소개": "../about/",
+                "작가-가이드": "../guide/", "작가촌-아카데미": "../academy/",
+                "작가촌-매거진": "../magazine/"}
     def relink(m):
         base = m.group(1).split("/")[-1].replace(".md", "")
         return f'href="{link_map.get(base, "#")}"'
