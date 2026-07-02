@@ -137,6 +137,8 @@ span.tbd:empty::after{content:"준비 중"}
 .cat-chips li{background:var(--card);border:1px solid var(--line);border-radius:var(--r-pill);
   padding:9px 18px;font-weight:600;font-size:.95rem}
 .cat-chips li:last-child{border-style:dashed;color:var(--celadon)}
+.sound-note{max-width:640px;margin:18px auto 0;background:var(--quote-bg);border-left:4px solid var(--celadon);
+  border-radius:0 10px 10px 0;padding:14px 18px;text-align:left;font-size:.98rem}
 
 .timeline{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0;counter-reset:tl}
 .timeline li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative}
