@@ -81,16 +81,25 @@ def render_md(path):
     html = transform(html)
     return page_h1, html, headings
 
-def pagetoc_aside(headings):
-    # 좌측 sticky 목차 — 표제가 2개 미만이면 생략(뷰어 규칙과 동일)
-    if len(headings) < 2:
-        return ""
-    links = "".join(
+def _toc_links(headings):
+    return "".join(
         f'<a class="{"lvl3" if lvl == 3 else "lvl2"}" href="#{hid}">{htmllib.escape(name)}</a>'
         for lvl, hid, name in headings)
+
+def pagetoc_aside(headings):
+    # 좌측 sticky 목차(데스크톱) — 표제가 2개 미만이면 생략(뷰어 규칙과 동일)
+    if len(headings) < 2:
+        return ""
     return ('<aside class="pagetoc" aria-label="목차">'
             '<div class="pagetoc-inner"><p class="pagetoc-head">목차</p>'
-            f'<nav>{links}</nav></div></aside>')
+            f'<nav>{_toc_links(headings)}</nav></div></aside>')
+
+def pagetoc_mobile(headings):
+    # 좁은 화면용 접이식 목차(상단) — 모바일에도 '모든 페이지 목차' 제공
+    if len(headings) < 2:
+        return ""
+    return ('<details class="pagetoc-m"><summary>목차</summary>'
+            f'<nav>{_toc_links(headings)}</nav></details>')
 
 def transform(html):
     # 📷 사진 자리 블록 → 스타일된 플레이스홀더
@@ -144,6 +153,10 @@ GLOBAL_JS = """<script>
     };
     window.addEventListener('scroll',spy,{passive:true});spy();
   }
+  // 모바일 접이식 목차: 링크 누르면 접기
+  var mtoc=document.querySelector('.pagetoc-m');
+  if(mtoc){[].slice.call(mtoc.querySelectorAll('a')).forEach(function(a){
+    a.addEventListener('click',function(){mtoc.open=false;});});}
   var els=[].slice.call(document.querySelectorAll('.reveal'));
   var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(rm||!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
@@ -441,8 +454,9 @@ def build():
                 if not (ig or form):
                     banner = ('<div class="notice">📮 <strong>지원 접수는 곧 열립니다.</strong> '
                               '아래는 신청 시 여쭤볼 내용의 미리보기예요 — 채널이 열리는 대로 이 자리에서 바로 신청하실 수 있습니다.</div>')
+            mtoc = pagetoc_mobile(headings)
             main_html = (f'<main class="page"><header class="page-head"><h1>{h1}</h1></header>'
-                         f'<div class="prose">{banner}{inner}</div></main>')
+                         f'{mtoc}<div class="prose">{banner}{inner}</div></main>')
             toc = pagetoc_aside(headings)
             body = f'<div class="doc-layout">{toc}{main_html}</div>' if toc else main_html
         page_dir = os.path.join(OUT, slug) if slug else OUT
