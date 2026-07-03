@@ -63,8 +63,9 @@ em{font-style:normal;font-weight:700;color:inherit}
 .tbd{color:var(--muted);font-weight:600}
 .tbd::after{content:" (준비 중)";font-weight:400;font-size:.88em}
 span.tbd:empty::after{content:"준비 중"}
-.notice{background:var(--quote-bg);border-left:4px solid var(--celadon);border-radius:0 10px 10px 0;
-  padding:14px 18px;margin:1.2em 0}
+/* Notion식 콜아웃 — 부드러운 채움면·12px·얇은 전체 보더+액센트 줄(한옥 팔레트 유지) */
+.notice{background:#F7F1E6;border:1px solid var(--line);border-left:3px solid var(--celadon);
+  border-radius:var(--r-card);padding:15px 18px;margin:1.4em 0;box-shadow:var(--sh-1)}
 
 /* ── 홈 섹션 ── */
 .home section{padding:72px 24px;max-width:920px;margin:0 auto;position:relative}
@@ -176,12 +177,19 @@ span.tbd:empty::after{content:"준비 중"}
 .pagetoc a:hover{color:var(--dancheong)}
 .pagetoc a.lvl3{padding-left:28px;font-size:.9rem}
 .pagetoc a.active{color:var(--dancheong);border-left-color:var(--dancheong);font-weight:700}
-.page-head{margin-bottom:28px}
-.page-head h1{margin:.2em 0}
-.prose h2{margin-top:2em;padding-bottom:.3em;border-bottom:1.5px solid var(--line)}
-.prose h3{margin-top:1.6em}
-.prose blockquote{background:var(--quote-bg);border-left:4px solid var(--celadon);
-  border-radius:0 10px 10px 0;padding:.8em 1.1em;margin:1.1em 0;color:#4a4239}
+.page-head{margin-bottom:32px}
+/* 에디토리얼 제목 리듬 (Notion 구조 차용): 큰 제목일수록 자간 타이트 */
+.page-head h1{margin:.2em 0;font-size:2.25rem;letter-spacing:-.035em;line-height:1.18}
+/* 긴 글 본문 — 따뜻한 차콜(장문 가독) */
+.prose{color:#33302B}
+/* h2: 굵은 밑줄 대신 단청 도장 한 점 같은 짧은 액센트 */
+.prose h2{margin-top:2.3em;margin-bottom:.55em;font-size:1.5rem;letter-spacing:-.03em;
+  padding-bottom:0;border-bottom:none}
+.prose h2::after{content:"";display:block;width:34px;height:3px;border-radius:3px;
+  background:var(--dancheong);margin-top:.5em;opacity:.9}
+.prose h3{margin-top:1.9em;font-size:1.2rem;letter-spacing:-.02em}
+.prose blockquote{background:#F7F1E6;border:1px solid var(--line);border-left:3px solid var(--celadon);
+  border-radius:var(--r-card);padding:.85em 1.15em;margin:1.2em 0;color:#4a4239}
 .prose blockquote p{margin:.3em 0}
 .prose table{border-collapse:collapse;width:100%;margin:1.2em 0;font-size:.93rem;display:block;overflow-x:auto}
 .prose th,.prose td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
