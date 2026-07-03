@@ -24,3 +24,7 @@ jobs:
           python3 site/build_site.py
       - name: Content harness check
         run: python3 tools/harness_check.py
+      - name: 커밋된 뷰어 산출물 최신성 (재빌드로 변화 없어야 함)
+        run: |
+          git diff --exit-code viewer/index.html viewer/sources.json \
+            || (echo "::error::뷰어 산출물이 낡았습니다 — python3 viewer/build.py 후 커밋하세요."; exit 1)
