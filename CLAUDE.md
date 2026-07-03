@@ -19,8 +19,10 @@ python3 tools/harness_check.py # 콘텐츠 일관성 하네스(문서 규칙 검
 - CI 게이트: `checks.yml`이 PR·푸시에서 `harness_check.py` 실행(문서 규칙 위반 시 실패).
 
 ## 하네스 (이 저장소를 드리프트 없이 유지하는 검증 장치)
-- **`tools/harness_check.py`** — 문서 회귀 테스트. 커밋 전·CI·SessionStart에서 실행.
-  검사: 뷰어 등록 정합성 · 상태 배지 · 내부 링크 · 수수료 축 드리프트 · 금지 존대어 · 공개 플레이스홀더 누출.
+- **`tools/harness_check.py`** — 문서 회귀 테스트(판정: 통과/실패). 커밋 전·CI·SessionStart에서 실행.
+  검사: 뷰어·문서-지도 등록 · 배지값 · 내부 링크 · 수수료 축 · 금지 보이스(존대어·과장어) · 빌드 신선도 · 공개 플레이스홀더 누출.
+- **`tools/harness_report.py`** — 상태 스냅샷(Observability): 문서 상태별 개수·결정 대기·TBD·드리프트 워치. 비실패, 언제든 현황 확인용.
+- **`tools/new_doc.py`** / `/new-doc` — 새 문서 스캐폴더(등록·재빌드·검사 자동).
 - **Playwright**(스크래치패드) — 렌더된 뷰어/사이트의 동작 검사(로드·링크·필터·필드).
 
 ## 절대 규칙 (어기면 하네스가 잡음)
