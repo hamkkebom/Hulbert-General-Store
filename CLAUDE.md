@@ -30,9 +30,12 @@ python3 tools/harness_check.py # 콘텐츠 일관성 하네스(문서 규칙 검
 4. **미확정 값은 대괄호로 공개 노출 금지** — 사이트는 `준비 중`으로 렌더(`site/config.json` 단일 변수). 법률 미검토 초안엔 '초안·법적 효력 없음' 표기.
 
 ## 새 문서를 추가할 때 (3곳 등록 필수 — 안 하면 하네스 실패)
-1. `docs/…​.md` 작성 — 상단에 `🏷️ **상태** · 갱신 YYYY-MM · 역할` 배지.
-2. **`viewer/build.py`** `DOCS` 리스트에 등록(그룹 코드 지정).
-3. **`docs/문서-지도.md`** 표에 행 추가 + **`README.md`** 관련 절에 링크.
+> 가장 쉬운 방법: **`/new-doc` 슬래시 커맨드** 또는 스캐폴더 —
+> `python3 tools/new_doc.py docs/X.md --title "제목" --group E --badge 📝 --role "역할"`
+> 이 스캐폴더가 아래 1·2와 재빌드·하네스 검사를 자동 수행한다. 3·4는 맥락 자리라 수동.
+1. `docs/…​.md` 작성 — 상단에 `🏷️ **상태** · 갱신 YYYY-MM · 역할` 배지. *(스캐폴더 자동)*
+2. **`viewer/build.py`** `DOCS` 리스트에 등록(그룹 코드 지정). *(스캐폴더 자동)*
+3. **`docs/문서-지도.md`** 표에 행 추가 + **`README.md`** 관련 절에 링크. *(수동 — 하네스가 색인 미등록을 잡음)*
 4. 공개 대상이면 **`site/build_site.py`** `PAGES`/`NAV`에 추가(운영자용 섹션은 `render_md`가 자동 제거).
 5. `python3 viewer/build.py && python3 site/build_site.py && python3 tools/harness_check.py`로 검증.
 
