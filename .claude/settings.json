@@ -1,4 +1,12 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(python3 viewer/build.py)",
+      "Bash(python3 site/build_site.py)",
+      "Bash(python3 tools/harness_check.py)",
+      "Bash(python3 tools/new_doc.py:*)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {

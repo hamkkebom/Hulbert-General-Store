@@ -7,7 +7,7 @@ Playwright(렌더된 HTML 검사)를 넘어, **문서 자체의 규칙**을 검�
 유지하게 하는 게이트. CI(pull_request/push)와 SessionStart 훅에서 실행.
 
 검사:
-  1) 등록 정합성   — docs/**/*.md ↔ viewer/build.py DOCS 일치(고아·미등록 없음)
+  1) 등록 정합성   — docs/**/*.md ↔ viewer/build.py DOCS 일치 + 문서-지도 색인 링크
   2) 상태 배지      — 모든 문서 상단에 🏷️
   3) 내부 링크      — 문서 간 .md 링크의 대상 파일 존재
   4) 수수료 축 드리프트 — 폐기된 '낸 제품 수 (예시)' 표 사용 금지(운영정책='칸' 단일)
@@ -35,11 +35,22 @@ with open(os.path.join(ROOT, "viewer", "build.py"), encoding="utf-8") as f:
 registered = re.findall(r'\(\s*"((?:docs/[^"]+|README\.md))"', build_src)
 registered_docs = sorted(d for d in registered if d.startswith("docs/"))
 
-# ── 1. 등록 정합성 ─────────────────────────────────────────────────
+# ── 1. 등록 정합성 (뷰어 + 문서-지도) ─────────────────────────────
 missing = sorted(set(disk_docs) - set(registered_docs))   # 디스크에 있으나 뷰어 미등록
 orphan  = sorted(set(registered_docs) - set(disk_docs))    # 뷰어에 등록됐으나 파일 없음
 for m in missing: err(f"[등록] 뷰어(viewer/build.py DOCS)에 미등록된 문서: {m}")
 for o in orphan:  err(f"[등록] 뷰어에 등록됐으나 파일이 없음: {o}")
+
+# 모든 문서는 문서-지도(색인)에도 링크되어야 한다.
+DOCMAP = "docs/문서-지도.md"
+with open(os.path.join(ROOT, DOCMAP), encoding="utf-8") as f:
+    docmap_text = f.read()
+for d in disk_docs:
+    if d == DOCMAP:
+        continue
+    base = os.path.basename(d)[:-3]  # 파일명(확장자 제거)
+    if f"{base}.md)" not in docmap_text and f"({base})" not in docmap_text:
+        err(f"[색인] 문서-지도(docs/문서-지도.md)에 링크되지 않은 문서: {d}")
 
 # ── 2. 상태 배지 ───────────────────────────────────────────────────
 for d in disk_docs:
