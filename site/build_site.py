@@ -43,6 +43,21 @@ NAV = [("about", "소개"), ("space", "공간"), ("makers", "작가들"),
        ("news", "소식"), ("contact", "문의")]
 
 # ──────────────────────────── md → HTML 변환 ────────────────────────────
+def gh_slug(text, sep="-"):
+    # 뷰어(viewer/build.py)와 동일한 슬러그 규칙 — 제목 앵커 ID 생성(한글 유지)
+    s = htmllib.unescape(text).strip().lower()
+    s = re.sub(r"[^\w\s-]", "", s, flags=re.UNICODE)
+    s = re.sub(r"\s", sep, s.strip())
+    return s
+
+def flatten_toc(tokens):
+    # markdown toc 확장의 중첩 토큰을 (레벨, id, 이름) 평면 목록으로
+    out = []
+    for t in tokens:
+        out.append((t["level"], t["id"], t["name"]))
+        out.extend(flatten_toc(t.get("children", [])))
+    return out
+
 def render_md(path):
     with open(os.path.join(ROOT, path), encoding="utf-8") as f:
         text = f.read()
@@ -56,10 +71,26 @@ def render_md(path):
     body = re.split(r"\n#{2,3} [^\n]*운영자", body)[0]
     body = re.split(r"\n#{2,3} [^\n]*게시 가이드", body)[0]
     body = re.split(r"\n## ④ 운영 가이드.*", body)[0]
-    md = markdown.Markdown(extensions=["extra", "sane_lists"])
+    md = markdown.Markdown(
+        extensions=["extra", "toc", "sane_lists", "attr_list"],
+        extension_configs={"toc": {"slugify": gh_slug, "separator": "-"}},
+    )
     html = md.convert(body)
+    # 제목 앵커(h2·h3) 목록 — 좌측 목차(TOC)용. 뷰어와 동일하게 2개 이상일 때만.
+    headings = [(lvl, hid, name) for lvl, hid, name in flatten_toc(md.toc_tokens) if lvl in (2, 3)]
     html = transform(html)
-    return page_h1, html
+    return page_h1, html, headings
+
+def pagetoc_aside(headings):
+    # 좌측 sticky 목차 — 표제가 2개 미만이면 생략(뷰어 규칙과 동일)
+    if len(headings) < 2:
+        return ""
+    links = "".join(
+        f'<a class="{"lvl3" if lvl == 3 else "lvl2"}" href="#{hid}">{htmllib.escape(name)}</a>'
+        for lvl, hid, name in headings)
+    return ('<aside class="pagetoc" aria-label="목차">'
+            '<div class="pagetoc-inner"><p class="pagetoc-head">목차</p>'
+            f'<nav>{links}</nav></div></aside>')
 
 def transform(html):
     # 📷 사진 자리 블록 → 스타일된 플레이스홀더
@@ -99,6 +130,20 @@ GLOBAL_JS = """<script>
   var top=document.querySelector('.top');
   var onScroll=function(){ if(top) top.classList.toggle('scrolled', window.scrollY>4); };
   window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  // 좌측 목차 스크롤 스파이 — 현재 보고 있는 섹션을 강조
+  var toc=document.querySelector('.pagetoc');
+  if(toc){
+    var links=[].slice.call(toc.querySelectorAll('a'));
+    var targets=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1));});
+    var spy=function(){
+      var idx=0;
+      for(var k=0;k<targets.length;k++){
+        if(targets[k]&&targets[k].getBoundingClientRect().top<=120)idx=k;else break;
+      }
+      links.forEach(function(a,k){a.classList.toggle('active',k===idx);});
+    };
+    window.addEventListener('scroll',spy,{passive:true});spy();
+  }
   var els=[].slice.call(document.querySelectorAll('.reveal'));
   var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(rm||!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
@@ -388,7 +433,7 @@ def build():
         elif slug == "makers":
             body = makers_body(root)
         else:
-            h1, inner = render_md(src)
+            h1, inner, headings = render_md(src)
             banner = ""
             if slug == "apply":
                 ig = cfg("instagram", default=None)
@@ -396,8 +441,10 @@ def build():
                 if not (ig or form):
                     banner = ('<div class="notice">📮 <strong>지원 접수는 곧 열립니다.</strong> '
                               '아래는 신청 시 여쭤볼 내용의 미리보기예요 — 채널이 열리는 대로 이 자리에서 바로 신청하실 수 있습니다.</div>')
-            body = (f'<main class="page"><header class="page-head"><h1>{h1}</h1></header>'
-                    f'<div class="prose">{banner}{inner}</div></main>')
+            main_html = (f'<main class="page"><header class="page-head"><h1>{h1}</h1></header>'
+                         f'<div class="prose">{banner}{inner}</div></main>')
+            toc = pagetoc_aside(headings)
+            body = f'<div class="doc-layout">{toc}{main_html}</div>' if toc else main_html
         page_dir = os.path.join(OUT, slug) if slug else OUT
         os.makedirs(page_dir, exist_ok=True)
         with open(os.path.join(page_dir, "index.html"), "w", encoding="utf-8") as f:
