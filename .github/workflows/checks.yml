@@ -1,0 +1,26 @@
+name: Content harness (docs consistency)
+
+# 콘텐츠 일관성 하네스 — PR·푸시에서 문서 규칙을 검사하는 검증 게이트.
+# 빌드 산출물(_site)까지 만들어 공개 플레이스홀더 누출도 검사한다.
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  harness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Build viewer + site (검사 대상 산출물 생성)
+        run: |
+          python3 viewer/build.py
+          python3 site/build_site.py
+      - name: Content harness check
+        run: python3 tools/harness_check.py
