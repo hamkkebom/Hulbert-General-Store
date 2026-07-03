@@ -184,10 +184,10 @@ span.tbd:empty::after{content:"준비 중"}
 .prose{color:#33302B}
 /* h2: 굵은 밑줄 대신 단청 도장 한 점 같은 짧은 액센트 */
 .prose h2{margin-top:2.3em;margin-bottom:.55em;font-size:1.5rem;letter-spacing:-.03em;
-  padding-bottom:0;border-bottom:none}
+  padding-bottom:0;border-bottom:none;scroll-margin-top:80px}
 .prose h2::after{content:"";display:block;width:34px;height:3px;border-radius:3px;
   background:var(--dancheong);margin-top:.5em;opacity:.9}
-.prose h3{margin-top:1.9em;font-size:1.2rem;letter-spacing:-.02em}
+.prose h3{margin-top:1.9em;font-size:1.2rem;letter-spacing:-.02em;scroll-margin-top:80px}
 .prose blockquote{background:#F7F1E6;border:1px solid var(--line);border-left:3px solid var(--celadon);
   border-radius:var(--r-card);padding:.85em 1.15em;margin:1.2em 0;color:#4a4239}
 .prose blockquote p{margin:.3em 0}
