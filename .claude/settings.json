@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 tools/harness_check.py 2>&1 | tail -20 || true"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -17,6 +17,8 @@
 
 `main`에 푸시하면 CI가 **자동으로 빌드·재배포**합니다(수동 재생성 불필요). 로컬 미리보기: `pip install -r requirements.txt && python3 viewer/build.py && python3 site/build_site.py` → `_site/`.
 
+> 🧪 **콘텐츠 하네스**: `python3 tools/harness_check.py`가 문서 규칙(뷰어 등록·상태 배지·내부 링크·수수료 축·금지 존대어·공개 플레이스홀더 누출)을 검사합니다. PR·푸시마다 CI(`checks.yml`)가 실행해 위반 시 실패시키고, 세션 시작 시에도 자동 실행됩니다. 저장소 관례·정본 지도는 [`CLAUDE.md`](CLAUDE.md) 참고.
+
 > ⚠️ 둘 다 **공개 링크**입니다 — 누구나 열람할 수 있습니다(뷰어는 검색엔진 제외 처리). 비공개가 필요하면 저장소를 비공개로 전환하거나 암호보호 호스팅으로 옮길 수 있습니다.
 
 ---
