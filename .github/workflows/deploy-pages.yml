@@ -10,9 +10,11 @@ permissions:
   pages: write
   id-token: write
 
+# 배포는 취소하지 않고 큐잉한다(GitHub Pages 권장) — 연속 머지 시
+# 이전 배포를 취소하다 나는 "Deployment failed, try again later." 방지.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
