@@ -101,13 +101,23 @@ def pagetoc_mobile(headings):
     return ('<details class="pagetoc-m"><summary>목차</summary>'
             f'<nav>{_toc_links(headings)}</nav></details>')
 
+NOLINK = "#__nolink__"
+
 def transform(html):
     # 📷 사진 자리 블록 → 스타일된 플레이스홀더
     def photo(m):
         inner = re.sub(r"</?p>", " ", m.group(1))
         inner = re.sub(r"\[사진 자리\s*[—-]?\s*", "", inner).replace("📷", "").replace("]", "")
         inner = re.sub(r"\*", "", inner).strip()
-        return f'<figure class="photo-slot"><span class="ps-icon">📷</span><figcaption>{inner}</figcaption></figure>'
+        # '캡션 예시:'는 내부 작업 라벨 — 공개 화면엔 라벨 없이 캡션 문장만 보여 준다
+        desc, _, cap = inner.partition("캡션 예시:")
+        desc, cap = desc.strip(), cap.strip().strip('"“”').strip()
+        cap_html = f'<span class="ps-cap">{cap}</span>' if cap else ""
+        return ('<figure class="photo-slot"><span class="ps-icon">📷</span>'
+                f'<figcaption><span class="ps-wait">사진 준비 중 — {desc}</span>{cap_html}</figcaption></figure>')
+    # 다른 문단 뒤에 붙어 한 인용구로 합쳐진 📷 문단은 따로 떼어 낸다
+    html = re.sub(r"\n<p>📷((?:(?!</p>).)*)</p>\s*</blockquote>",
+                  r"\n</blockquote>\n<blockquote>\n<p>📷\1</p>\n</blockquote>", html, flags=re.S)
     html = re.sub(r"<blockquote>\s*<p>📷(.*?)</p>\s*</blockquote>", photo, html, flags=re.S)
     # 문서 간 .md 링크 → 사이트 경로
     link_map = {"합류하기": "../apply/", "문의": "../contact/", "소개": "../about/",
@@ -117,14 +127,25 @@ def transform(html):
                 "작가촌-매거진": "../magazine/"}
     def relink(m):
         base = m.group(1).split("/")[-1].replace(".md", "")
-        return f'href="{link_map.get(base, "#")}"'
+        return f'href="{link_map.get(base, NOLINK)}"'
     html = re.sub(r'href="([^"]+\.md)(?:#[^"]*)?"', relink, html)
+    # 공개 페이지가 없는 내부 문서로의 링크는 죽은 '#' 링크 대신 글자만 남긴다
+    html = re.sub(r'<a href="%s"[^>]*>(?:<code>)?(.*?)(?:</code>)?</a>' % NOLINK, r"\1", html, flags=re.S)
+    # 문서 표기 CTA '**[라벨 → /slug]** *(…CTA)*' → 실제 버튼
+    html = re.sub(r'<p><strong>\[\s*([^\]<]+?)\s*→\s*/([a-z]+)\s*\]</strong>(?:\s*<em>\([^)]*\)</em>)?</p>',
+                  r'<p class="cta-row"><a class="cta-btn" href="../\2/">\1</a></p>', html)
+    # 머리글이 전부 빈 표의 thead 제거(빈 줄로 보임)
+    html = re.sub(r"<thead>\s*<tr>\s*(?:<th[^>]*>\s*</th>\s*)+</tr>\s*</thead>\s*", "", html)
     # TBD 값 → '준비 중' 정직 표기 (빈 대괄호 노출 금지 — 기술-사양 §4)
     html = re.sub(r"<code>@?\[\s*([^<]*?)(?:—|-)?\s*TBD\s*\]</code>",
                   r'<span class="tbd">준비 중</span>', html)
     html = re.sub(r"<code>@?\[\s*([^<]*?)\s*\]</code>", r'<span class="tbd">\1</span>', html)
     html = re.sub(r"@?\[(인스타 아이디|지원폼 링크|상세 위치|상세 주소|연락처|이메일 주소|운영 시간)\]",
                   r'<span class="tbd">\1</span>', html)
+    # 본문에 남은 맨 'TBD' — 공개 화면엔 내부 약어 대신 우리말로
+    html = re.sub(r"\s*\(TBD\)", "", html)
+    html = html.replace("<strong>TBD</strong>", '<span class="tbd">준비 중</span>')
+    html = re.sub(r"(?<![A-Za-z])TBD(?![A-Za-z])", "준비 중", html)
     # '예시' 배지 (디자인-가이드 §4 — 미확정 수치는 예시임이 보이게)
     html = html.replace("<code>예시</code>", '<span class="ex-badge">예시</span>')
     html = re.sub(r"\(예시\)", '<span class="ex-badge">예시</span>', html)

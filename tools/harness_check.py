@@ -127,6 +127,7 @@ except FileNotFoundError:
 site_dir = os.path.join(ROOT, "_site")
 if os.path.isdir(site_dir):
     leak_re = re.compile(r'@?\[\s*[^\]]*(?:TBD|인스타|지원폼|상세 주소|운영 시간|이메일 주소|연락처)[^\]]*\]')
+    memo_re = re.compile(r'\[사진 자리|캡션 예시|\[[^\]\n]{0,30}→\s*/[a-z]+\s*\]|\(\d차 CTA\)|(?<![A-Za-z])TBD(?![A-Za-z])')
     for p in glob.glob(os.path.join(site_dir, "**", "*.html"), recursive=True):
         if "/viewer/" in p.replace("\\", "/"):
             continue  # 내부 뷰어는 원문 편집기라 예외
@@ -134,6 +135,14 @@ if os.path.isdir(site_dir):
             html = f.read()
         for m in leak_re.finditer(html):
             err(f"[누출] 공개 HTML에 원시 플레이스홀더 노출: {os.path.relpath(p, ROOT)} → {m.group(0)}")
+        # 내부 작업 표기(사진 자리·캡션 예시·CTA 메모·맨 TBD·죽은 링크)가 보이는 글자로 남았는지
+        text = re.sub(r"<(script|style)\b.*?</\1>", " ", html, flags=re.S)
+        dead = re.findall(r'<a href="#(?:__nolink__)?"[^>]*>', text)
+        text = re.sub(r"<[^>]+>", " ", text)
+        for m in memo_re.finditer(text):
+            err(f"[누출] 공개 HTML에 내부 작업 표기 노출: {os.path.relpath(p, ROOT)} → {m.group(0)}")
+        if dead:
+            err(f"[누출] 공개 HTML에 갈 곳 없는 링크(href=\"#\") {len(dead)}개: {os.path.relpath(p, ROOT)}")
 else:
     info("_site 미빌드 — 공개 플레이스홀더 검사 건너뜀(CI는 빌드 후 실행).")
 

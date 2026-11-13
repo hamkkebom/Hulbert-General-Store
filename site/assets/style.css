@@ -68,6 +68,8 @@ span.tbd:empty::after{content:"준비 중"}
   border-radius:var(--r-card);padding:15px 18px;margin:1.4em 0;box-shadow:var(--sh-1)}
 
 /* ── 홈 섹션 ── */
+/* 풀블리드 밴드(100vw)가 세로 스크롤바 폭만큼 넘쳐 가로 스크롤이 생기지 않게 */
+.home{overflow-x:clip}
 .home section{padding:72px 24px;max-width:920px;margin:0 auto;position:relative}
 /* 풀블리드 배경 밴드 (구조 변경 없이 좌우 확장) */
 .band-soft::before,.band-ink::before{content:"";position:absolute;top:0;bottom:0;left:calc(50% - 50vw);
@@ -193,6 +195,10 @@ span.tbd:empty::after{content:"준비 중"}
 .prose blockquote{background:#F7F1E6;border:1px solid var(--line);border-left:3px solid var(--celadon);
   border-radius:var(--r-card);padding:.85em 1.15em;margin:1.2em 0;color:#4a4239}
 .prose blockquote p{margin:.3em 0}
+.prose pre{overflow-x:auto;max-width:100%;background:#F0E8D8;border-radius:8px;padding:12px 14px;font-size:.86rem}
+.prose pre code{background:none;padding:0}
+.cta-row{margin:1.6em 0}
+.prose a.cta-btn{color:#fff;text-decoration:none}
 .prose table{border-collapse:collapse;width:100%;margin:1.2em 0;font-size:.93rem;display:block;overflow-x:auto}
 .prose th,.prose td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
 .prose th{background:#F1E9DA;white-space:nowrap}
@@ -206,6 +212,8 @@ span.tbd:empty::after{content:"준비 중"}
   border:1.5px dashed var(--line);border-radius:14px;margin:1.4em 0;padding:44px 20px;text-align:center}
 .photo-slot .ps-icon{display:block;font-size:1.6rem;margin-bottom:8px;opacity:.6}
 .photo-slot figcaption{color:var(--muted);font-size:.86rem;max-width:480px;margin:0 auto}
+.photo-slot .ps-wait{display:block}
+.photo-slot .ps-cap{display:block;margin-top:6px;color:var(--ink);font-size:.95rem}
 .photo-slot.sq{padding:64px 16px;margin:0 0 14px}
 
 /* ── 작가 카드 (Airbnb 리스팅 그리드 구조) ── */
