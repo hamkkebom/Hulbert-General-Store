@@ -78,7 +78,7 @@ def render_md(path):
     html = md.convert(body)
     # 제목 앵커(h2·h3) 목록 — 좌측 목차(TOC)용. 뷰어와 동일하게 2개 이상일 때만.
     headings = [(lvl, hid, name) for lvl, hid, name in flatten_toc(md.toc_tokens) if lvl in (2, 3)]
-    html = transform(html)
+    html = transform(html, SLOT_IMG.get(path, ()))
     return page_h1, html, headings
 
 def _toc_links(headings):
@@ -103,7 +103,13 @@ def pagetoc_mobile(headings):
 
 NOLINK = "#__nolink__"
 
-def transform(html):
+# 문서의 📷 사진 자리(등장 순서)에 넣을 임시 사진 — None이면 "사진 준비 중" 자리 유지.
+# 실제 사진을 받으면 site/assets/img/의 같은 파일명으로 덮어쓴다(출처: CREDITS.md).
+SLOT_IMG = {
+    "docs/pages/공간소개.md": ["hanok-gate.jpg", None, "celadon-bottles.jpg", None, "alley.jpg"],
+}
+
+def transform(html, slot_imgs=()):
     # 📷 사진 자리 블록 → 스타일된 플레이스홀더
     def photo(m):
         inner = re.sub(r"</?p>", " ", m.group(1))
@@ -112,9 +118,17 @@ def transform(html):
         # '캡션 예시:'는 내부 작업 라벨 — 공개 화면엔 라벨 없이 캡션 문장만 보여 준다
         desc, _, cap = inner.partition("캡션 예시:")
         desc, cap = desc.strip(), cap.strip().strip('"“”').strip()
+        desc_txt = re.sub(r"<[^>]+>", "", desc)
+        i = photo.n; photo.n += 1
+        fn = slot_imgs[i] if i < len(slot_imgs) else None
+        if fn:
+            cap_html = f"{cap} " if cap else ""
+            return (f'<figure class="photo-fig"><img src="../assets/img/{fn}" alt="{htmllib.escape(desc_txt)}" loading="lazy">'
+                    f'<figcaption>{cap_html}<span class="ps-ref">참고 이미지 · 실제 공간 사진으로 바뀝니다</span></figcaption></figure>')
         cap_html = f'<span class="ps-cap">{cap}</span>' if cap else ""
-        return ('<figure class="photo-slot"><span class="ps-icon">📷</span>'
-                f'<figcaption><span class="ps-wait">사진 준비 중 — {desc}</span>{cap_html}</figcaption></figure>')
+        return ('<figure class="photo-slot">'
+                f'<figcaption><span class="ps-wait">사진 준비 중 — {desc_txt}</span>{cap_html}</figcaption></figure>')
+    photo.n = 0
     # 다른 문단 뒤에 붙어 한 인용구로 합쳐진 📷 문단은 따로 떼어 낸다
     html = re.sub(r"\n<p>📷((?:(?!</p>).)*)</p>\s*</blockquote>",
                   r"\n</blockquote>\n<blockquote>\n<p>📷\1</p>\n</blockquote>", html, flags=re.S)
@@ -468,6 +482,9 @@ MAKERS = [
      "공연은 무료지만, 그날 만난 분이 제 노래의 평생 팬이 되더라고요."),
 ]
 # 필터 칩 (docs/pages/작가들.md §4 — '장르 불문'이 원칙, 가르기 아니라 찾기 편하라고)
+# 예시 카드의 임시 사진(장르별) — 실제 작가가 입점하면 작품 사진으로 교체
+MAKER_IMG = {"도예": "maker-pottery.jpg", "가죽": "maker-leather.jpg", "향·리빙": "maker-candle.jpg",
+             "일러스트·지류": "maker-illust.jpg", "음악·공연": "maker-music.jpg"}
 CHIPS = ["전체", "도자·유리·금속", "가죽·직물·주얼리", "캔들·디퓨저·리빙", "일러스트·지류·문구", "음악·공연", "기타"]
 
 def makers_body(root):
@@ -476,23 +493,23 @@ def makers_body(root):
         for c in CHIPS)
     cards = "".join(f"""
     <article class="mk-card" data-cat="{cat}">
-      <div class="photo-slot sq"><span class="ps-icon">📷</span><figcaption>작품 사진 자리</figcaption></div>
-      <p class="mk-genre">[{g}] <span class="ex-badge">예시</span></p>
+      <figure class="mk-photo"><img src="{root}assets/img/{MAKER_IMG[g]}" alt="{g} 작업 참고 사진" width="800" height="800" loading="lazy"></figure>
+      <p class="mk-genre">{g} <span class="ex-badge">예시</span></p>
       <h3>{name}</h3>
-      <p class="mk-dream">✦ 꿈: "{dream}"</p>
+      <p class="mk-dream">"{dream}"</p>
       <p class="mk-work">대표작 · {work}</p>
-      <p class="mk-quote">💬 "{quote}"</p>
+      <p class="mk-quote">"{quote}"</p>
     </article>""" for g, cat, name, dream, work, quote in MAKERS)
     return f"""
 <main class="page">
 <header class="page-head">
-  <p class="eyebrow">함께하는 작가들</p>
+  <p class="mz-kicker"><span class="dot-ac"></span>함께하는 작가들</p>
   <h1>여기, 같은 꿈을 가진 동료들이 있습니다.</h1>
 </header>
 <div class="prose">
   <p>헐버트작가촌은 나이도 학벌도 묻지 않습니다. 가장 먼저 묻는 건 하나예요 — <strong>"당신의 꿈은 무엇인가요?"</strong><br>
   그 꿈을 담은 한글 이름으로 서로를 부르고, 경복궁 옆 서촌 한옥 마루 위에 각자의 작품을 나란히 올립니다.</p>
-  <div class="notice">📌 지금 보이는 카드는 <strong>분위기를 보여주기 위한 가상 예시</strong>입니다. 첫 작가들이 입점하면 진짜 얼굴로 바뀝니다. (장르 필터는 '가르기'가 아니라 <strong>찾기 편하라고</strong> 두는 장치예요 — 한옥에 어울리면 장르 불문입니다.)</div>
+  <div class="notice">지금 보이는 카드와 사진은 <strong>분위기를 보여주기 위한 가상 예시</strong>입니다. 첫 작가들이 입점하면 진짜 얼굴로 바뀝니다. (장르 필터는 '가르기'가 아니라 <strong>찾기 편하라고</strong> 두는 장치예요 — 한옥에 어울리면 장르 불문입니다.)</div>
 </div>
 <div class="mk-filter" role="group" aria-label="장르 필터">{chips}</div>
 <div class="mk-grid" id="mkGrid">{cards}
@@ -536,7 +553,7 @@ def build():
                 ig = cfg("instagram", default=None)
                 form = cfg("apply_form_url", default=None)
                 if not (ig or form):
-                    banner = ('<div class="notice">📮 <strong>지원 접수는 곧 열립니다.</strong> '
+                    banner = ('<div class="notice"><strong>지원 접수는 곧 열립니다.</strong> '
                               '아래는 신청 시 여쭤볼 내용의 미리보기예요 — 채널이 열리는 대로 이 자리에서 바로 신청하실 수 있습니다.</div>')
             mtoc = pagetoc_mobile(headings)
             main_html = (f'<main class="page"><header class="page-head"><h1>{h1}</h1></header>'

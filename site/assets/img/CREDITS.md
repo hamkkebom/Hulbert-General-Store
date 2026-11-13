@@ -11,3 +11,8 @@
 | `celadon-bottles.jpg` | 홈 '장르' 꼭지 | 청자빛 도자 병들 | Jessica Ruscello jruscello | CC0 | https://commons.wikimedia.org/wiki/File:Large_ceramic_bottles_(Unsplash).jpg |
 | `moon-jar.jpg` | 홈 맺음 | 백자 달항아리 | Daderot | CC0 | https://commons.wikimedia.org/wiki/File:Moon_jar,_Korea,_Joseon_dynasty,_1650-1750,_porcelain_with_clear_glaze,_Asian_Art_Museum_SF_-_DSC08709.jpg |
 | `alley.jpg` | 홈 '여정' 꼭지 | 한옥 골목 | Timothy Ries wacowacko | CC0 | https://commons.wikimedia.org/wiki/File:Korean_Traditional_House_(Unsplash).jpg |
+| `maker-pottery.jpg` | 작가들 — 도예 예시 카드 | 물레 위에서 흙을 올리는 손 | Jared Sluyter jaredsluyter | CC0 | https://commons.wikimedia.org/wiki/File:Making_pottery_(Unsplash).jpg |
+| `maker-leather.jpg` | 작가들 — 가죽 예시 카드 | 재단판 위에 놓인 가죽 조각 | Ivars Krutainis krutainis | CC0 | https://commons.wikimedia.org/wiki/File:Leather_on_cutting_board_(Unsplash).jpg |
+| `maker-candle.jpg` | 작가들 — 향·리빙 예시 카드 | 놋쇠 촛대에 꽂힌 초 | Janko Ferlič thepootphotographer | CC0 | https://commons.wikimedia.org/wiki/File:Candle_in_candle_holder_(Unsplash).jpg |
+| `maker-illust.jpg` | 작가들 — 일러스트·지류 예시 카드 | 붓으로 수채화를 그리는 손 | Nik MacMillan nikarthur | CC0 | https://commons.wikimedia.org/wiki/File:Artist_painting_watercolor_(Unsplash).jpg |
+| `maker-music.jpg` | 작가들 — 음악·공연 예시 카드 | 어쿠스틱 기타를 치는 손 | Gabriel Gurrola gabrielgurrola | CC0 | https://commons.wikimedia.org/wiki/File:Acoustic_guitar_player_in_pale_light_(Unsplash).jpg |
