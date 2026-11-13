@@ -118,6 +118,7 @@ def transform(html):
     # 다른 문단 뒤에 붙어 한 인용구로 합쳐진 📷 문단은 따로 떼어 낸다
     html = re.sub(r"\n<p>📷((?:(?!</p>).)*)</p>\s*</blockquote>",
                   r"\n</blockquote>\n<blockquote>\n<p>📷\1</p>\n</blockquote>", html, flags=re.S)
+    html = re.sub(r"<blockquote>\s*</blockquote>\s*", "", html)  # 떼어 내고 남은 빈 인용구 제거
     html = re.sub(r"<blockquote>\s*<p>📷(.*?)</p>\s*</blockquote>", photo, html, flags=re.S)
     # 문서 간 .md 링크 → 사이트 경로
     link_map = {"합류하기": "../apply/", "문의": "../contact/", "소개": "../about/",
@@ -138,13 +139,13 @@ def transform(html):
     html = re.sub(r"<thead>\s*<tr>\s*(?:<th[^>]*>\s*</th>\s*)+</tr>\s*</thead>\s*", "", html)
     # TBD 값 → '준비 중' 정직 표기 (빈 대괄호 노출 금지 — 기술-사양 §4)
     html = re.sub(r"<code>@?\[\s*([^<]*?)(?:—|-)?\s*TBD\s*\]</code>",
-                  r'<span class="tbd">준비 중</span>', html)
+                  r'<span class="tbd"></span>', html)
     html = re.sub(r"<code>@?\[\s*([^<]*?)\s*\]</code>", r'<span class="tbd">\1</span>', html)
     html = re.sub(r"@?\[(인스타 아이디|지원폼 링크|상세 위치|상세 주소|연락처|이메일 주소|운영 시간)\]",
                   r'<span class="tbd">\1</span>', html)
     # 본문에 남은 맨 'TBD' — 공개 화면엔 내부 약어 대신 우리말로
     html = re.sub(r"\s*\(TBD\)", "", html)
-    html = html.replace("<strong>TBD</strong>", '<span class="tbd">준비 중</span>')
+    html = html.replace("<strong>TBD</strong>", '<span class="tbd"></span>')
     html = re.sub(r"(?<![A-Za-z])TBD(?![A-Za-z])", "준비 중", html)
     # '예시' 배지 (디자인-가이드 §4 — 미확정 수치는 예시임이 보이게)
     html = html.replace("<code>예시</code>", '<span class="ex-badge">예시</span>')
@@ -152,6 +153,8 @@ def transform(html):
     return html
 
 # ──────────────────────────── 공통 레이아웃 ────────────────────────────
+# 제목용 명조(홈 매거진형) — 본문은 Pretendard 유지
+SERIF = "https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&display=swap"
 FONT = "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
 
 # 전역 인터랙션: 헤더 그림자(스크롤) + 스크롤 리빌(reduced-motion 존중, JS 없으면 전체 표시)
@@ -230,6 +233,9 @@ def layout(slug, title, desc, body, root):
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="{FONT}" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="{FONT}"></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{SERIF}">
 <link rel="stylesheet" href="{root}assets/style.css">
 </head>
 <body class="p-{slug or 'home'}">
@@ -265,129 +271,180 @@ def home_body(root):
     ]
     faq_html = "".join(
         f"<details><summary>{q}</summary><p>{a}</p></details>" for q, a in faq)
+    img = root + "assets/img/"
     return f"""
 <main class="home">
 
-<section class="hero-band reveal">
-  <div class="hero">
-    <p class="eyebrow"><span class="dot-ac"></span>경복궁 옆 서촌 한옥 · 함께할 작가를 찾습니다</p>
-    <h1>잃을 걱정 없이,<br>하고 싶은 창작만.</h1>
-    <p class="lede">입점비도, 자릿세도 없습니다. 안 팔린 달엔 한 푼도 내지 않습니다.<br>
-    그리고 끝내 — <strong>함께 회사의 주인이 됩니다.</strong></p>
-    <p class="hero-cta"><a class="cta-btn big" href="{root}apply/">합류하기</a>
-    <a class="ghost-btn" href="#why">3분 만에 이해하기 ↓</a></p>
-  </div>
-  <svg class="eaves" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,90 L0,54 Q720,-24 1440,54 L1440,90 Z" fill="var(--card)"/>
-    <path d="M0,54 Q720,-24 1440,54" fill="none" stroke="var(--dancheong)" stroke-width="2" opacity=".5"/>
-  </svg>
-</section>
-
-<section class="stats reveal">
-  <div class="stat"><b>0<span class="won">원</span></b><p>입점비</p></div>
-  <div class="stat"><b>0<span class="won">원</span></b><p>매달 자릿세</p></div>
-  <div class="stat"><b>0<span class="won">원</span></b><p>안 팔린 달</p></div>
-  <div class="stat accent"><b>3<span class="won">단계</span></b><p>끝내 함께 주인</p></div>
-</section>
-
-<section class="empathy reveal">
-  <h2>위탁 매장에 한 번쯤 데여보셨죠?</h2>
-  <ul class="pain">
-    <li>💸 입점비 수십만 원</li>
-    <li>📆 매달 빠져나가는 자릿세</li>
-    <li>📦 안 팔리면 고스란히 내 손해</li>
-  </ul>
-  <p>그러다 <em>정말 하고 싶은 작품</em> 대신 <em>당장 돈이 되는 흔한 물건</em>만 만들게 되는 그 마음 —<br>
-  우리는 그 마음을 알기에, <strong>규칙을 정반대로 짰습니다.</strong></p>
-</section>
-
-<section class="who band-soft reveal">
-  <h2>한글을 사랑한 '헐버트'처럼, 작가를 뒤에서 받칩니다</h2>
-  <p>이름 <strong>헐버트</strong>는 한글을 사랑하고 한국을 도운 미국인 <strong>호머 헐버트 박사</strong>에서 왔습니다.<br>
-  앞에 나서지 않고 뒤에서 받친 그 사람처럼 — 회사는 주인공이 아니라 <strong>작가를 받치는 조력자</strong>입니다.</p>
-  <p class="values"><span>함께</span><span>공평</span><span>투명</span></p>
-  <p class="more"><a href="{root}about/">우리 이야기 더 보기 →</a></p>
-</section>
-
-<section class="benefits reveal" id="why">
-  <h2>왜 합류하면 좋은가</h2>
-  <div class="cards3">
-    <div class="card"><div class="ic">💸</div><h3>입점비 0원</h3><p>가격은 처음부터 끝까지 <em>작가님이</em> 책정합니다. 우리는 손대지 않습니다.</p></div>
-    <div class="card"><div class="ic">🏠</div><h3>경복궁 옆 서촌 한옥</h3><p>관광객이 흐르는 길목, 예술가의 동네. 작품이 '상품'이 아니라 '작품'이 됩니다.</p></div>
-    <div class="card"><div class="ic">🤝</div><h3>복지수수료</h3><p>안 팔리면 0원. 수수료마저 회사 몫이 아니라 한옥 운영비로 전액 쓰입니다.</p></div>
+<section class="mz-hero">
+  <div class="mz-wrap">
+    <p class="mz-kicker"><span class="dot-ac"></span>작가 모집 · 경복궁 옆 서촌 한옥</p>
+    <div class="mz-hero-grid">
+      <h1>잃을 걱정 없이,<br>하고 싶은 창작만.</h1>
+      <div class="mz-hero-side">
+        <p class="lede">입점비도, 자릿세도 없습니다. 안 팔린 달엔 한 푼도 내지 않습니다. 그리고 끝내 — <strong>함께 회사의 주인이 됩니다.</strong></p>
+        <p class="hero-cta"><a class="cta-btn big" href="{root}apply/">합류하기</a>
+        <a class="mz-link" href="#why">3분 만에 이해하기 ↓</a></p>
+      </div>
+    </div>
+    <figure class="mz-cover">
+      <img src="{img}hanok-gate.jpg" alt="기와지붕 아래 나무 대문이 있는 한옥 골목" width="1920" height="1280" fetchpriority="high">
+      <figcaption>사진은 분위기를 보여 주는 참고 이미지입니다 — 실제 공간 사진으로 바뀝니다.</figcaption>
+    </figure>
+    <dl class="mz-facts">
+      <div><dt>입점비</dt><dd>0<span>원</span></dd></div>
+      <div><dt>매달 자릿세</dt><dd>0<span>원</span></dd></div>
+      <div><dt>안 팔린 달</dt><dd>0<span>원</span></dd></div>
+      <div class="accent"><dt>끝내 함께 주인</dt><dd>3<span>단계</span></dd></div>
+    </dl>
   </div>
 </section>
 
-<section class="money band-ink reveal">
-  <h2>돈 이야기, 가장 쉽게</h2>
-  <p class="money-head">수수료가 '회사 주머니'로 가지 않습니다</p>
-  <div class="flow">
-    <div class="flow-src">작가님이 판 금액</div>
-    <div class="flow-arms">
-      <div class="arm"><b class="pct">30%<span class="ex-badge">일반수수료</span></b><p>한옥 월세·관리비로 <strong>전액</strong><br><span class="muted">(회사 마진 0)</span></p></div>
-      <div class="arm keep"><b>나머지</b><p><strong>작가님 지갑으로</strong></p></div>
+<section class="mz-sec reveal">
+  <div class="mz-wrap mz-cols">
+    <p class="mz-label"><b>01</b>이야기의 시작</p>
+    <div class="mz-body">
+      <h2>위탁 매장에 한 번쯤 데여보셨죠?</h2>
+      <ul class="mz-lines">
+        <li>입점비 수십만 원</li>
+        <li>매달 빠져나가는 자릿세</li>
+        <li>안 팔리면 고스란히 내 손해</li>
+      </ul>
+      <p>그러다 <em>정말 하고 싶은 작품</em> 대신 <em>당장 돈이 되는 흔한 물건</em>만 만들게 되는 그 마음 —</p>
+      <p class="mz-pull">우리는 그 마음을 알기에,<br>규칙을 정반대로 짰습니다.</p>
     </div>
   </div>
-  <ul class="money-notes">
-    <li><strong>안 팔린 달엔?</strong> 낼 돈이 없습니다.</li>
-    <li><strong>잘 팔리기 시작하면?</strong> '증명'한 작가에게 30%보다 <strong>더 깎아주는 '복지수수료'</strong>가 열립니다.</li>
-  </ul>
-  <p class="oneline">한 줄 요약 — <strong>떼이는 게 아니라, 한옥을 다 함께 공동구매하는 것.</strong></p>
 </section>
 
-<section class="journey band-soft reveal">
-  <h2>합류 여정 — 끝내 '함께 주인'</h2>
-  <p>작가로 시작해, 동료로 일하고, 공동 주인으로. <strong>오를지 말지는 선택입니다.</strong></p>
-  <ol class="timeline">
-    <li><b>1 · 위탁</b><p>복지수수료 관계. 가격 자율, 판 만큼만.</p></li>
-    <li><b>2 · 너투사</b><p>'너(회사·동료)에게 투자하는 사람들'. 마케팅·매장일 등으로 월급처럼 버는 동료 파트너(3.3% 프리랜서).</p></li>
-    <li><b>3 · 나투사</b><p>'나에게 투자하는 사람들'. 회사의 진짜 주주. 한옥 고정비를 법인이 함께 집니다.</p></li>
-  </ol>
-</section>
-
-<section class="what reveal">
-  <h2>장르도, 소재도 묻지 않습니다 — 한옥에 어울리면 뭐든</h2>
-  <ul class="cat-chips">
-    <li>도자·유리·금속</li><li>가죽·직물·주얼리</li><li>캔들·디퓨저·리빙</li>
-    <li>일러스트·지류·문구</li><li>🎵 음악·공연</li><li>그리고 무엇이든</li>
-  </ul>
-  <p class="oneline">기준은 하나 — <strong>"한옥 마루 위에 자연스럽게 어울리는가."</strong></p>
-  <p class="sound-note">🎵 <strong>'소리'를 파는 예술가도 함께합니다</strong> — 음악가·싱어·연주자가 한옥에서 공연하고, 마음이 닿은 손님과 평생의 팬으로 이어집니다. <span class="tbd">한옥 무대 준비 중</span></p>
-</section>
-
-<section class="voices band-soft reveal">
-  <h2>동료 이야기 <span class="ex-badge">예시</span></h2>
-  <p class="muted">아직 첫 동료를 기다리는 중입니다 — 아래는 톤을 보여드리는 예시이며, 실제 작가의 목소리로 바뀝니다.</p>
-  <div class="cards2">
-    <blockquote class="voice"><p>"입점비 걱정이 없으니, 팔릴 물건이 아니라 <em>만들고 싶은 걸</em> 만들게 됐어요."</p><cite>온새미로 · 도예 <span class="ex-badge">예시</span></cite></blockquote>
-    <blockquote class="voice"><p>"안 팔린 달엔 정말 0원이더라고요. 그제야 마음 놓고 실험했어요."</p><cite>봄해 · 가죽 <span class="ex-badge">예시</span></cite></blockquote>
+<section class="mz-sec mz-tint reveal">
+  <div class="mz-wrap mz-split">
+    <figure class="mz-fig"><img src="{img}clay-hands.jpg" alt="작업대 위에서 흙을 빚는 두 손" width="1280" height="853" loading="lazy"></figure>
+    <div>
+      <p class="mz-label inline"><b>02</b>이름에 담은 뜻</p>
+      <h2>한글을 사랑한 '헐버트'처럼,<br>작가를 뒤에서 받칩니다</h2>
+      <p>이름 <strong>헐버트</strong>는 한글을 사랑하고 한국을 도운 미국인 <strong>호머 헐버트 박사</strong>에서 왔습니다. 앞에 나서지 않고 뒤에서 받친 그 사람처럼 — 회사는 주인공이 아니라 <strong>작가를 받치는 조력자</strong>입니다.</p>
+      <p class="mz-values"><span>함께</span><span>공평</span><span>투명</span></p>
+      <p class="more"><a class="mz-link" href="{root}about/">우리 이야기 더 보기 →</a></p>
+    </div>
   </div>
 </section>
 
-<section class="honest reveal">
-  <h2>솔직하게 — 이런 단점·각오가 있어요</h2>
-  <p>달콤한 혜택만 말하지 않겠습니다. 정직하게, <strong>단점과 각오</strong>도 먼저 보여드립니다.</p>
-  <div class="cards3 sober">
-    <div class="card"><h3>처음엔 일반수수료 30%</h3><p>깎아주는 '복지수수료'는 일정 매출을 <em>증명</em>한 뒤에 열려요 — 시작부터 싼 게 아닙니다.</p></div>
-    <div class="card"><h3>냉정한 서바이벌</h3><p>매대는 한정적이라, 손님의 선택을 오래 받지 못한 작품은 다음 작가를 위해 <strong>자리를 양보(퇴점)</strong>해야 합니다.</p></div>
-    <div class="card"><h3>오르면 커지는 책임</h3><p>너투사는 낮엔 회사 일·밤엔 작품, 나투사(주주)는 <strong>동료들의 꿈까지 책임지는 '왕관의 무게'</strong>를 집니다.</p></div>
+<section class="mz-sec reveal" id="why">
+  <div class="mz-wrap mz-cols">
+    <p class="mz-label"><b>03</b>합류하면 좋은 이유</p>
+    <div class="mz-body wide">
+      <h2>왜 합류하면 좋은가</h2>
+      <div class="mz-three">
+        <div><span class="mz-num">하나</span><h3>입점비 0원</h3><p>가격은 처음부터 끝까지 <em>작가님이</em> 책정합니다. 우리는 손대지 않습니다.</p></div>
+        <div><span class="mz-num">둘</span><h3>경복궁 옆 서촌 한옥</h3><p>관광객이 흐르는 길목, 예술가의 동네. 작품이 '상품'이 아니라 '작품'이 됩니다.</p></div>
+        <div><span class="mz-num">셋</span><h3>복지수수료</h3><p>안 팔리면 0원. 수수료마저 회사 몫이 아니라 한옥 운영비로 전액 쓰입니다.</p></div>
+      </div>
+    </div>
   </div>
-  <p class="oneline"><strong>이 각오를 기꺼이 질 분과 함께합니다.</strong> 단점까지 알고도 오신다면, 진짜 동료입니다.</p>
 </section>
 
-<section class="faq band-soft reveal">
-  <h2>자주 묻는 질문</h2>
-  {faq_html}
-  <p class="more"><a href="{root}contact/">더 많은 질문과 답 →</a></p>
+<section class="mz-sec mz-ink reveal">
+  <div class="mz-wrap mz-cols">
+    <p class="mz-label"><b>04</b>돈 이야기</p>
+    <div class="mz-body wide">
+      <h2>돈 이야기, 가장 쉽게</h2>
+      <p class="mz-sub">수수료가 '회사 주머니'로 가지 않습니다</p>
+      <div class="mz-flow">
+        <div class="mz-flow-src">작가님이 판 금액</div>
+        <div class="mz-flow-arm"><b>30%</b><span class="ex-badge">일반수수료</span><p>한옥 월세·관리비로 <strong>전액</strong> <span class="muted">(회사 마진 0)</span></p></div>
+        <div class="mz-flow-arm keep"><b>나머지</b><p><strong>작가님 지갑으로</strong></p></div>
+      </div>
+      <ul class="mz-lines on-ink">
+        <li><strong>안 팔린 달엔?</strong> 낼 돈이 없습니다.</li>
+        <li><strong>잘 팔리기 시작하면?</strong> '증명'한 작가에게 30%보다 <strong>더 깎아주는 '복지수수료'</strong>가 열립니다.</li>
+      </ul>
+      <p class="mz-pull">떼이는 게 아니라,<br>한옥을 다 함께 공동구매하는 것.</p>
+    </div>
+  </div>
 </section>
 
-<section class="join reveal">
-  <h2>거창한 서류는 없습니다. 세 가지만 보내주세요.</h2>
-  <ol class="three">
-    <li>① 작품 사진 3~5장</li><li>② "당신의 꿈" 한 문장</li><li>③ 불리고 싶은 한글 이름</li>
-  </ol>
-  <p class="ask">당신의 꿈은 무엇인가요?</p>
-  <p><a class="cta-btn big" href="{root}apply/">합류 신청하기</a></p>
+<section class="mz-sec reveal">
+  <div class="mz-wrap mz-split rev">
+    <div>
+      <p class="mz-label inline"><b>05</b>합류 여정</p>
+      <h2>끝내 '함께 주인'</h2>
+      <p>작가로 시작해, 동료로 일하고, 공동 주인으로. <strong>오를지 말지는 선택입니다.</strong></p>
+      <ol class="mz-steps">
+        <li><b>위탁</b><p>복지수수료 관계. 가격 자율, 판 만큼만.</p></li>
+        <li><b>너투사</b><p>'너(회사·동료)에게 투자하는 사람들'. 마케팅·매장일 등으로 월급처럼 버는 동료 파트너(3.3% 프리랜서).</p></li>
+        <li><b>나투사</b><p>'나에게 투자하는 사람들'. 회사의 진짜 주주. 한옥 고정비를 법인이 함께 집니다.</p></li>
+      </ol>
+    </div>
+    <figure class="mz-fig tall"><img src="{img}alley.jpg" alt="자전거가 기대어 선 한옥 골목" width="960" height="1443" loading="lazy"></figure>
+  </div>
+</section>
+
+<section class="mz-sec mz-tint reveal">
+  <div class="mz-wrap">
+    <figure class="mz-fig banner"><img src="{img}celadon-bottles.jpg" alt="청자빛 유약을 입은 도자 병들" width="1920" height="1280" loading="lazy"></figure>
+    <div class="mz-cols">
+      <p class="mz-label"><b>06</b>어떤 작품이든</p>
+      <div class="mz-body wide">
+        <h2>장르도, 소재도 묻지 않습니다 — 한옥에 어울리면 뭐든</h2>
+        <ul class="mz-genres">
+          <li>도자·유리·금속</li><li>가죽·직물·주얼리</li><li>캔들·디퓨저·리빙</li>
+          <li>일러스트·지류·문구</li><li>음악·공연</li><li>그리고 무엇이든</li>
+        </ul>
+        <p class="mz-pull small">기준은 하나 — "한옥 마루 위에 자연스럽게 어울리는가."</p>
+        <p class="mz-note"><strong>'소리'를 파는 예술가도 함께합니다</strong> — 음악가·싱어·연주자가 한옥에서 공연하고, 마음이 닿은 손님과 평생의 팬으로 이어집니다. <span class="muted">(한옥 무대 준비 중)</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mz-sec reveal">
+  <div class="mz-wrap mz-cols">
+    <p class="mz-label"><b>07</b>동료 이야기 <span class="ex-badge">예시</span></p>
+    <div class="mz-body wide">
+      <p class="muted">아직 첫 동료를 기다리는 중입니다 — 아래는 톤을 보여드리는 예시이며, 실제 작가의 목소리로 바뀝니다.</p>
+      <div class="mz-quotes">
+        <blockquote><p>"입점비 걱정이 없으니, 팔릴 물건이 아니라 <em>만들고 싶은 걸</em> 만들게 됐어요."</p><cite>온새미로 · 도예 <span class="ex-badge">예시</span></cite></blockquote>
+        <blockquote><p>"안 팔린 달엔 정말 0원이더라고요. 그제야 마음 놓고 실험했어요."</p><cite>봄해 · 가죽 <span class="ex-badge">예시</span></cite></blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mz-sec mz-tint reveal">
+  <div class="mz-wrap mz-cols">
+    <p class="mz-label"><b>08</b>솔직하게</p>
+    <div class="mz-body wide">
+      <h2>이런 단점·각오가 있어요</h2>
+      <p>달콤한 혜택만 말하지 않겠습니다. 정직하게, <strong>단점과 각오</strong>도 먼저 보여드립니다.</p>
+      <div class="mz-three plain">
+        <div><h3>처음엔 일반수수료 30%</h3><p>깎아주는 '복지수수료'는 일정 매출을 <em>증명</em>한 뒤에 열려요 — 시작부터 싼 게 아닙니다.</p></div>
+        <div><h3>냉정한 서바이벌</h3><p>매대는 한정적이라, 손님의 선택을 오래 받지 못한 작품은 다음 작가를 위해 <strong>자리를 양보(퇴점)</strong>해야 합니다.</p></div>
+        <div><h3>오르면 커지는 책임</h3><p>너투사는 낮엔 회사 일·밤엔 작품, 나투사(주주)는 <strong>동료들의 꿈까지 책임지는 '왕관의 무게'</strong>를 집니다.</p></div>
+      </div>
+      <p class="mz-pull small"><strong>이 각오를 기꺼이 질 분과 함께합니다.</strong> 단점까지 알고도 오신다면, 진짜 동료입니다.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mz-sec reveal">
+  <div class="mz-wrap mz-cols">
+    <p class="mz-label"><b>09</b>자주 묻는 질문</p>
+    <div class="mz-body wide mz-faq">
+      {faq_html}
+      <p class="more"><a class="mz-link" href="{root}contact/">더 많은 질문과 답 →</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="mz-join reveal">
+  <div class="mz-wrap">
+    <img class="mz-jar" src="{img}moon-jar.jpg" alt="나무 선반 위에 놓인 백자 달항아리" width="960" height="640" loading="lazy">
+    <p class="mz-kicker center">거창한 서류는 없습니다. 세 가지만 보내주세요.</p>
+    <ol class="mz-three-ask">
+      <li>작품 사진 3~5장</li><li>"당신의 꿈" 한 문장</li><li>불리고 싶은 한글 이름</li>
+    </ol>
+    <h2 class="mz-ask">당신의 꿈은 무엇인가요?</h2>
+    <p><a class="cta-btn big" href="{root}apply/">합류 신청하기</a></p>
+  </div>
 </section>
 
 </main>"""
@@ -455,6 +512,12 @@ def build():
     if os.path.exists(OUT): shutil.rmtree(OUT)
     os.makedirs(os.path.join(OUT, "assets", "img"), exist_ok=True)
     shutil.copy(os.path.join(HERE, "assets", "style.css"), os.path.join(OUT, "assets", "style.css"))
+    # 사진(임시 무료 사진 포함 — 출처는 site/assets/img/CREDITS.md)
+    img_src = os.path.join(HERE, "assets", "img")
+    if os.path.isdir(img_src):
+        for f in os.listdir(img_src):
+            if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".svg")):
+                shutil.copy(os.path.join(img_src, f), os.path.join(OUT, "assets", "img", f))
     # OG 대표 이미지: 기존 브랜드 일러스트 재사용
     og_src = os.path.join(ROOT, "viewer", "assets", "홈-랜딩-카피.svg")
     if os.path.exists(og_src): shutil.copy(og_src, os.path.join(OUT, "assets", "img", "og.svg"))
