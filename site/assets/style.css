@@ -288,6 +288,63 @@ span.tbd:empty::after{content:"준비 중"}
 .mk-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px}
 .p-makers .join{max-width:var(--wide);padding:56px 24px}
 
+/* ── 내부 페이지: 홈(매거진형)과 같은 결 — 명조 제목·얇은 괘선·상자 대신 여백 ── */
+.page-head h1,.prose h2,.join h2,.ask,.f-brand{
+  font-family:"Noto Serif KR","Nanum Myeongjo","Apple SD Gothic Neo",serif}
+.page-head{margin-bottom:44px;padding-bottom:26px;border-bottom:2px solid var(--ink)}
+.page-head h1{font-size:clamp(2rem,4.6vw,2.9rem);font-weight:700;letter-spacing:-.03em;line-height:1.25;margin:0;word-break:keep-all}
+.page-head .mz-kicker{margin-bottom:18px}
+.prose{font-size:1.02rem}
+.prose p,.prose li{word-break:keep-all}
+.prose h2{font-size:1.65rem;font-weight:700;letter-spacing:-.025em;line-height:1.4;
+  margin-top:2.6em;padding-top:1.5em;border-top:1px solid var(--line);word-break:keep-all}
+.prose h2::after{display:none}
+.prose>h2:first-child{margin-top:0;padding-top:0;border-top:none}
+.prose h3{font-size:1.14rem;margin-top:2em}
+.prose hr{display:none}
+/* 인용·알림 — 상자 대신 먹 세로줄 */
+.prose blockquote,.notice{background:var(--soft);border:none;border-left:2px solid var(--ink);
+  border-radius:0;box-shadow:none;padding:16px 22px;color:var(--body)}
+/* 표 — 가로 괘선만 */
+.prose table{font-size:.95rem;border-top:2px solid var(--ink)}
+.prose th,.prose td{border:none;border-bottom:1px solid var(--line);padding:13px 16px 13px 0}
+.prose th{background:none;font-weight:700}
+.prose tr:nth-child(even) td{background:none}
+.prose td:first-child{font-weight:700;white-space:nowrap;padding-right:28px}
+.prose pre{border-radius:0;background:var(--soft);border-left:2px solid var(--ink)}
+.prose code{background:var(--soft-2);border-radius:3px}
+.prose pre code{background:none}
+/* 사진 */
+.photo-fig{margin:2em 0}
+.photo-fig img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:4px}
+.photo-fig figcaption{margin-top:10px;font-size:.9rem;color:var(--body)}
+.ps-ref{display:block;font-size:.76rem;color:var(--muted);margin-top:2px}
+.photo-slot{background:var(--tint);border:none;border-radius:4px;padding:56px 24px;margin:2em 0}
+.photo-slot figcaption{font-size:.84rem}
+.photo-slot .ps-cap{font-size:.95rem;margin-top:8px}
+/* 목차 */
+.pagetoc-head{letter-spacing:.14em;font-size:.76rem}
+.pagetoc a{font-size:.93rem}
+/* 작가들 */
+.mk-photo{margin:0 0 14px}
+.mk-photo img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:4px;transition:opacity .2s}
+.mk-card:hover .mk-photo img{opacity:.9}
+.mk-genre{font-size:.78rem;letter-spacing:.04em;margin-bottom:4px}
+.mk-card h3{font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-size:1.3rem;margin:.1em 0 .4em}
+.mk-dream{font-weight:600;line-height:1.6}
+.mk-quote{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}
+.mk-grid{gap:44px 28px;margin-top:32px}
+.mk-filter{border-bottom:1px solid var(--line)}
+.p-makers .page-head{padding-top:56px;border-bottom:none;padding-bottom:0;margin-bottom:8px}
+.p-makers .page-head h1{max-width:760px}
+/* 맺음(작가들) — 상자 대신 위 괘선 */
+.join{background:none;border:none;border-top:2px solid var(--ink);border-radius:0;box-shadow:none;
+  margin:88px auto 0 !important;padding:72px 24px 40px !important}
+.join h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.025em}
+.ask{font-size:clamp(1.6rem,3.6vw,2.4rem);font-weight:700;margin:28px 0 32px;letter-spacing:-.03em}
+.ghost-btn{border-width:1px}
+.f-brand{font-weight:700;font-size:1.05rem}
+
 /* ── 푸터 · sticky CTA ── */
 .foot{border-top:1px solid var(--line);text-align:center;padding:48px 24px 120px;color:var(--muted);font-size:.88rem}
 .f-brand{color:var(--ink);font-weight:800;font-size:1rem}
