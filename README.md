@@ -12,8 +12,8 @@
 
 ## 🌐 라이브
 
-- 👉 **헐버트작가촌 모집 사이트**: **https://dokkaebimarketing1-lang.github.io/Hulbert-General-Store/** — 예비 작가가 보는 공개 사이트 (홈·소개·공간·운영정책·합류 등 8페이지). 소스 [`site/`](site/), 사양 [`docs/기술-사양.md`](docs/기술-사양.md).
-- 👉 **문서 뷰어(내부용)**: **https://dokkaebimarketing1-lang.github.io/Hulbert-General-Store/viewer/** — 아래 모든 기획 문서를 한 페이지에서 열람·편집. 소스 [`viewer/`](viewer/).
+- 👉 **헐버트작가촌 모집 사이트**: **https://hamkkebom.github.io/Hulbert-General-Store/** — 예비 작가가 보는 공개 사이트 (홈·소개·공간·운영정책·합류 등 8페이지). 소스 [`site/`](site/), 사양 [`docs/기술-사양.md`](docs/기술-사양.md).
+- 👉 **문서 뷰어(내부용)**: **https://hamkkebom.github.io/Hulbert-General-Store/viewer/** — 아래 모든 기획 문서를 한 페이지에서 열람·편집. 소스 [`viewer/`](viewer/).
 
 `main`에 푸시하면 CI가 **자동으로 빌드·재배포**합니다(수동 재생성 불필요). 로컬 미리보기: `pip install -r requirements.txt && python3 viewer/build.py && python3 site/build_site.py` → `_site/`.
 
