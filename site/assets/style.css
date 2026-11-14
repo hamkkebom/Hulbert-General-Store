@@ -694,3 +694,36 @@ p,li{text-wrap:pretty}
   .cta-btn:hover{transform:translateY(-2px)}
   .cta-btn:active{transform:translateY(0)}
 }
+
+/* ── 글자·여백 키우기 (큰 화면) ── */
+@media (min-width:861px){
+  .mz-sec{padding:148px 0}
+  .home h2{font-size:clamp(1.9rem,3.3vw,2.75rem);line-height:1.32;margin-bottom:.8em}
+  .mz-label{font-size:.9rem}
+  .mz-label b{font-size:2.7rem;margin-bottom:12px}
+  .mz-body>p:not(.mz-pull),.mz-split p,.mz-duo p:not(.mz-pull){font-size:1.16rem;line-height:1.9}
+  .mz-lines li{font-size:1.14rem;padding:21px 0}
+  .mz-pull{font-size:clamp(1.6rem,3vw,2.3rem)}
+  .mz-duo .mz-pull{font-size:clamp(1.4rem,2.2vw,1.8rem)}
+  .mz-three{gap:44px;margin-top:44px}
+  .mz-three h3{font-size:1.42rem}
+  .mz-three p{font-size:1.08rem;line-height:1.85}
+  .mz-steps li::before{font-size:2.6rem}
+  .mz-steps b{font-size:1.26rem}
+  .mz-steps p{font-size:1.08rem}
+  .mz-quotes{gap:56px;margin-top:40px}
+  .mz-quotes p{font-size:1.55rem;line-height:1.62}
+  .mz-faq summary{font-size:1.2rem;padding:28px 36px 28px 0}
+  .mz-faq summary::after{top:24px}
+  .mz-faq details p{font-size:1.08rem}
+  .mz-join{padding:148px 0 156px}
+  .mz-jar{width:200px;height:200px}
+  .prose{font-size:1.1rem;line-height:1.92}
+  .prose h2{font-size:1.9rem;margin-top:2.6em}
+  .prose h3{font-size:1.28rem}
+  .page-band-in{padding-top:84px;padding-bottom:76px}
+  .gnav a{font-size:.98rem}
+}
+@media (min-width:1280px){
+  :root{--wide:1200px}
+}
