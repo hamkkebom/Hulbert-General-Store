@@ -727,3 +727,18 @@ p,li{text-wrap:pretty}
 @media (min-width:1280px){
   :root{--wide:1200px}
 }
+
+/* ── 다듬기 8: 태블릿 폭 01 구역 · 모바일 메뉴 ── */
+@media (min-width:861px) and (max-width:1080px){
+  .mz-duo{grid-template-columns:1fr;gap:36px}
+  .mz-cols{grid-template-columns:140px minmax(0,1fr);gap:32px}
+  .mz-quotes p{font-size:1.3rem}
+}
+@media (max-width:860px){
+  .mnav nav{padding:10px 20px 20px}
+  .mnav a{padding:15px 0;font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-size:1.12rem;font-weight:700}
+  .mnav a.on{color:var(--dancheong)}
+  .mnav a:last-child{margin-top:16px;padding:15px 0;border-radius:4px;background:var(--btn);color:var(--paper);
+    text-align:center;font-family:inherit;font-size:1rem;font-weight:700}
+  .menu-btn{border-radius:4px}
+}
