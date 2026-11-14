@@ -28,7 +28,7 @@ def cfg(key, fallback_key=None, default="준비 중"):
 PAGES = [
     ("",        "헐버트작가촌 — 잃을 걱정 없이, 하고 싶은 창작만", "경복궁 옆 서촌 한옥. 입점비 0원, 가격은 작가가, 안 팔린 달엔 0원. 함께할 작가를 찾습니다.", None),
     ("about",   "우리는 누구인가 — 헐버트작가촌", "한글을 사랑한 헐버트처럼, 작가를 뒤에서 받칩니다. 함께·공평·투명.", "docs/pages/소개.md"),
-    ("space",   "당신의 작품이 놓일 곳 — 헐버트작가촌", "경복궁 옆 서촌 한옥. 100평대 마루와 마당, 한지에 스민 햇살 위에 작품이 놓입니다.", "docs/pages/공간소개.md"),
+    ("space",   "당신의 작품이 놓일 곳 — 헐버트작가촌", "경복궁 옆 서촌 한옥. 마루와 마당, 창살문으로 드는 햇살 위에 작품이 놓입니다.", "docs/pages/공간소개.md"),
     ("policy",  "함께 일하는 규칙 — 헐버트작가촌", "입점비 0원, 가격은 작가가, 수수료는 한옥 고정비로 전액. 운영 규칙을 정직하게 공개합니다.", "docs/pages/운영정책.md"),
     ("apply",   "합류하기 — 헐버트작가촌", "거창한 서류 없이 세 가지만 — 작품 사진, 꿈 한 문장, 한글 이름. 당신의 꿈은 무엇인가요?", "docs/pages/합류하기.md"),
     ("makers",  "함께하는 작가들 — 헐버트작가촌", "같은 꿈을 가진 동료들. 다음 빈자리의 주인공은 당신일 수 있어요.", None),
@@ -165,7 +165,7 @@ SLOT_IMG = {
     "docs/pages/공간소개.md": ["courtyard.jpg", "hall.jpg", "on-chest.jpg", "price-tags.jpg", "alley.jpg"],
 }
 # 실제 촬영 사진 — 어디 사진인지 캡션에 밝힌다(출처: CREDITS.md).
-REAL = {"courtyard.jpg": "서촌 한옥 '함께봄'", "hall.jpg": "서촌 한옥 '함께봄'"}
+REAL = {"courtyard.jpg": "헐버트 카페 한옥", "hall.jpg": "헐버트 카페 한옥"}
 # AI로 생성한 연출 이미지 — 실제 촬영본으로 덮어쓴 파일은 여기서 빼면 표기가 사라진다.
 GENERATED = {"on-chest.jpg", "price-tags.jpg", "maker-pottery.jpg"}
 
@@ -404,7 +404,7 @@ def home_body(root):
     </div>
     <figure class="hx-photo">
       <img src="{img}courtyard.jpg" alt="소나무가 선 한옥 마당과 본채" width="900" height="502" fetchpriority="high">
-      <figcaption>서촌 한옥 '함께봄'의 마당 — 실제 사진</figcaption>
+      <figcaption>헐버트 카페 한옥의 마당 — 실제 사진</figcaption>
     </figure>
   </div>
   <div class="mz-wrap">
