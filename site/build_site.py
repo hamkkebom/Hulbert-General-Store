@@ -283,6 +283,20 @@ MAKERS_JS = """<script>
 # 내부 페이지 제목 위 작은 표지
 KICKER = dict(NAV, policy="운영 규칙", apply="합류")
 
+# 내부 페이지를 읽어 나가는 순서 — 글 끝의 '다음 읽을거리'에 쓴다.
+READ_ORDER = ["about", "space", "policy", "guide", "academy", "magazine", "makers", "news", "contact"]
+
+def page_next(slug, root):
+    if slug not in READ_ORDER:
+        return ""
+    i = READ_ORDER.index(slug)
+    nxt = READ_ORDER[i + 1] if i + 1 < len(READ_ORDER) else None
+    a = (f'<a class="pn-item" href="{root}{nxt}/"><span class="pn-label">다음 읽을거리</span>'
+         f'<strong>{KICKER[nxt]}</strong><span class="pn-arrow" aria-hidden="true">→</span></a>') if nxt else ""
+    b = (f'<a class="pn-item pn-join" href="{root}apply/"><span class="pn-label">마음이 닿았다면</span>'
+         f'<strong>합류 신청하기</strong><span class="pn-arrow" aria-hidden="true">→</span></a>')
+    return f'<nav class="page-next" aria-label="다음으로">{a}{b}</nav>'
+
 def layout(slug, title, desc, body, root):
     active = lambda s: ' class="on"' if s == slug else ""
     nav = "".join(f'<a href="{root}{s}/"{active(s)}>{label}</a>' for s, label in NAV)
@@ -571,11 +585,11 @@ def makers_body(root):
       <p class="mk-quote">"{quote}"</p>
     </article>""" for g, cat, name, dream, work, quote in MAKERS)
     return f"""
-<main class="page">
-<header class="page-head">
+<header class="page-band wide"><div class="page-band-in">
   <p class="mz-kicker"><span class="dot-ac"></span>함께하는 작가들</p>
   <h1>여기, 같은 꿈을 가진 동료들이 있습니다.</h1>
-</header>
+</div></header>
+<main class="page">
 <div class="prose">
   <p>헐버트작가촌은 나이도 학벌도 묻지 않습니다. 가장 먼저 묻는 건 하나예요 — <strong>"당신의 꿈은 무엇인가요?"</strong><br>
   그 꿈을 담은 한글 이름으로 서로를 부르고, 경복궁 옆 서촌 한옥 마루 위에 각자의 작품을 나란히 올립니다.</p>
@@ -632,10 +646,12 @@ def build():
                     banner = ('<div class="notice"><strong>지원 접수는 곧 열립니다.</strong> '
                               '아래는 신청 시 여쭤볼 내용의 미리보기예요 — 채널이 열리는 대로 이 자리에서 바로 신청하실 수 있습니다.</div>')
             mtoc = pagetoc_mobile(headings)
-            main_html = (f'<main class="page"><header class="page-head"><p class="mz-kicker"><span class="dot-ac"></span>{KICKER.get(slug, "헐버트작가촌")}</p><h1>{h1}</h1></header>'
-                         f'{mtoc}<div class="prose">{banner}{inner}</div></main>')
+            band = (f'<header class="page-band{"" if pagetoc_aside(headings) else " solo"}"><div class="page-band-in">'
+                    f'<p class="mz-kicker"><span class="dot-ac"></span>{KICKER.get(slug, "헐버트작가촌")}</p>'
+                    f'<h1>{h1}</h1><p class="page-lead">{htmllib.escape(desc)}</p></div></header>')
+            main_html = (f'<main class="page">{mtoc}<div class="prose">{banner}{inner}</div>{page_next(slug, root)}</main>')
             toc = pagetoc_aside(headings)
-            body = f'<div class="doc-layout">{toc}{main_html}</div>' if toc else main_html
+            body = band + (f'<div class="doc-layout">{toc}{main_html}</div>' if toc else main_html)
         page_dir = os.path.join(OUT, slug) if slug else OUT
         os.makedirs(page_dir, exist_ok=True)
         with open(os.path.join(page_dir, "index.html"), "w", encoding="utf-8") as f:
