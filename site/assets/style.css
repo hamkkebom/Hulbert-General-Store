@@ -570,3 +570,39 @@ p,li{text-wrap:pretty}
   .hx .lede{font-size:1.06rem;margin:22px 0 28px}
   .hx-photo{aspect-ratio:4/3;min-height:0}
 }
+
+/* ── 내부 페이지: 먹색 제목 띠 + 글 끝 '다음으로' ── */
+.page-band{background:var(--band);color:var(--band-text)}
+.page-band-in{max-width:1160px;margin:0 auto;padding:68px 24px 60px 314px}
+.page-band.solo .page-band-in{max-width:var(--reader);padding-left:24px}
+.page-band .mz-kicker{color:var(--band-keep);margin:0 0 18px}
+.page-band h1{font-family:"Noto Serif KR","Nanum Myeongjo",serif;color:var(--paper);margin:0;
+  font-size:clamp(2.1rem,4.4vw,3.3rem);font-weight:700;letter-spacing:-.03em;line-height:1.25;word-break:keep-all}
+.page-band .page-lead{margin:20px 0 0;max-width:33em;font-size:1.1rem;line-height:1.8;color:var(--band-text);word-break:keep-all}
+.page-band+.doc-layout .page,.page-band+.page{padding-top:52px}
+.page-band+.doc-layout .pagetoc{padding-top:56px}
+.page-next{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:72px;padding-top:36px;border-top:2px solid var(--ink)}
+.page-next .pn-item:only-child{grid-column:1/-1}
+.pn-item{position:relative;display:flex;flex-direction:column;gap:8px;padding:24px 56px 26px 24px;border:1px solid var(--line);
+  border-radius:4px;background:var(--card);color:var(--ink);text-decoration:none;transition:border-color .2s,background .2s}
+.pn-label{font-size:.82rem;font-weight:700;letter-spacing:.04em;color:var(--muted)}
+.pn-item strong{font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-size:1.3rem;line-height:1.35}
+.pn-arrow{position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:1.3rem;color:var(--dancheong);transition:transform .2s}
+.pn-item:hover{border-color:var(--ink);text-decoration:none}
+.pn-item:hover .pn-arrow{transform:translate(4px,-50%)}
+.pn-join{background:var(--band);border-color:var(--band);color:var(--paper)}
+.pn-join .pn-label{color:var(--band-muted)}
+.pn-join .pn-arrow{color:var(--band-accent)}
+.pn-join:hover{background:var(--band-2);border-color:var(--band-2)}
+@media (max-width:1080px){
+  .page-band-in{max-width:var(--reader);padding:52px 24px 46px}
+  .page-band+.doc-layout .page,.page-band+.page{padding-top:36px}
+}
+@media (max-width:860px){
+  .page-band-in{padding:40px 20px 36px}
+  .page-band .page-lead{font-size:1.02rem;margin-top:14px}
+  .page-next{grid-template-columns:1fr;margin-top:52px}
+}
+@media (prefers-reduced-motion:reduce){.pn-arrow{transition:none}}
+.page-band.wide .page-band-in{max-width:var(--wide);padding-left:24px}
+.page-band.wide h1{max-width:15em}
