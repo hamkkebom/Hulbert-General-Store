@@ -162,10 +162,10 @@ NOLINK = "#__nolink__"
 # 문서의 📷 사진 자리(등장 순서)에 넣을 사진 — None이면 "사진 준비 중" 자리 유지.
 # 실제 사진을 받으면 site/assets/img/의 같은 파일명으로 덮어쓴다(출처: CREDITS.md).
 SLOT_IMG = {
-    "docs/pages/공간소개.md": ["courtyard.jpg", "hall.jpg", "on-chest.jpg", "price-tags.jpg", "alley.jpg"],
+    "docs/pages/공간소개.md": ["courtyard.jpg", "hall-table.jpg", "on-chest.jpg", "price-tags.jpg", "alley.jpg"],
 }
 # 실제 촬영 사진 — 어디 사진인지 캡션에 밝힌다(출처: CREDITS.md).
-REAL = {"courtyard.jpg": "헐버트 한옥", "hall.jpg": "헐버트 한옥"}
+REAL = {"courtyard.jpg": "헐버트카페", "hall-table.jpg": "헐버트카페"}
 # AI로 생성한 연출 이미지 — 실제 촬영본으로 덮어쓴 파일은 여기서 빼면 표기가 사라진다.
 GENERATED = {"on-chest.jpg", "price-tags.jpg", "maker-pottery.jpg"}
 
@@ -404,7 +404,7 @@ def home_body(root):
     </div>
     <figure class="hx-photo">
       <img src="{img}courtyard.jpg" alt="소나무가 선 한옥 마당과 본채" width="900" height="502" fetchpriority="high">
-      <figcaption>헐버트 한옥의 마당 — 실제 사진</figcaption>
+      <figcaption>헐버트카페의 마당 — 실제 사진</figcaption>
     </figure>
   </div>
   <div class="mz-wrap">
