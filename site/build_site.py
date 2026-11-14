@@ -166,6 +166,7 @@ def photo_ref(fn):
     return ("AI로 만든 연출 이미지" if fn in GENERATED else "참고 이미지") + " · 실제 공간 사진으로 바뀝니다"
 
 def transform(html, slot_imgs=()):
+    html = re.sub(r"<li>\s*[◻☐□]\s*", '<li class="chk">', html)
     # 📷 사진 자리 블록 → 스타일된 플레이스홀더
     def photo(m):
         inner = re.sub(r"</?p>", " ", m.group(1))
@@ -335,6 +336,7 @@ def layout(slug, title, desc, body, root):
       <p class="f-legal">사업자 정보 · 개인정보처리방침 · 이용약관 — <span class="tbd">법률 검토 후 게시 예정</span></p>
     </div>
   </div>
+  <div class="foot-base"><span>© 헐버트작가촌</span><a href="{root}apply/">합류 신청하기 →</a></div>
 </footer>
 {sticky}
 </body>
