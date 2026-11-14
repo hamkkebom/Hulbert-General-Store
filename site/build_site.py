@@ -76,6 +76,15 @@ PAGE_TWEAKS = {
         (r"^### 게시물 \d+ — 〔([^〕]+)〕 \(예시\)\n", r"### \1 `예시`\n"),
         (r"^> 톤은 작가 모집 키트.*\n", ""),
         (r"^`〔[^〕]+〕` · 예시 날짜: .*\n", ""),
+        (r"^👉 지원: .*\n", "지원 채널과 위치는 준비 중입니다 — 열리는 대로 합류하기 페이지에서 안내합니다.\n"),
+        (r"^📍 위치: .*\n", ""),
+    ],
+    "docs/작가-가이드.md": [
+        # 글자로 그린 흐름도 → 단계 목록
+        (r"^```\n지원 → 큐레이션[^`]*```\n",
+         '<ol class="flow"><li>지원</li><li>큐레이션</li><li>입점 확정</li><li>작품 등록·표시</li>'
+         '<li>진열·로테이션</li><li>판매·정산</li><li class="opt">퇴점·재입점</li></ol>\n'
+         '<p class="flow-opt">원하면 <strong>2단계 너투사</strong> → <strong>3단계 나투사</strong>로 이어집니다.</p>\n'),
     ],
     "docs/작가촌-매거진.md": [
         (r"^> 📌 인터뷰 한 줄 인용은.*\n", ""),
@@ -165,6 +174,11 @@ def photo_ref(fn):
         return f"{REAL[fn]} 실제 사진"
     return ("AI로 만든 연출 이미지" if fn in GENERATED else "참고 이미지") + " · 실제 공간 사진으로 바뀝니다"
 
+# 공개 페이지가 없는 내부 문서 이름(코드 표기) → 해당 공개 페이지 링크
+DOC_LINK = {"작가-운영정책": ("policy", "운영 규칙"), "작가-소개": ("about", "소개"),
+            "작가촌-아카데미": ("academy", "아카데미"), "작가-가이드": ("guide", "작가 가이드"),
+            "작가촌-매거진": ("magazine", "작가 이야기")}
+
 def transform(html, slot_imgs=()):
     html = re.sub(r"<li>\s*[◻☐□]\s*", '<li class="chk">', html)
     # 📷 사진 자리 블록 → 스타일된 플레이스홀더
@@ -221,6 +235,9 @@ def transform(html, slot_imgs=()):
     # '예시' 배지 (디자인-가이드 §4 — 미확정 수치는 예시임이 보이게)
     html = html.replace("<code>예시</code>", '<span class="ex-badge">예시</span>')
     html = re.sub(r"\(예시\)", '<span class="ex-badge">예시</span>', html)
+    html = re.sub("<li>(<p>)?[①-⑳] ?", lambda m: "<li>" + (m.group(1) or ""), html)  # 목록 점과 겹치는 원문자 번호
+    for name, (slug, label) in DOC_LINK.items():
+        html = html.replace(f"<code>{name}</code>", f'<a href="../{slug}/">{label}</a>')
     return html
 
 # ──────────────────────────── 공통 레이아웃 ────────────────────────────
