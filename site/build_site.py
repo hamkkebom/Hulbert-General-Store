@@ -236,6 +236,7 @@ def transform(html, slot_imgs=()):
     html = html.replace("<code>예시</code>", '<span class="ex-badge">예시</span>')
     html = re.sub(r"\(예시\)", '<span class="ex-badge">예시</span>', html)
     html = re.sub("<li>(<p>)?[①-⑳] ?", lambda m: "<li>" + (m.group(1) or ""), html)  # 목록 점과 겹치는 원문자 번호
+    html = re.sub("<p><strong>— ?(.*?)</strong>", lambda m: f'<p class="qa"><strong>{m.group(1)}</strong>', html)  # 인터뷰 질문
     for name, (slug, label) in DOC_LINK.items():
         html = html.replace(f"<code>{name}</code>", f'<a href="../{slug}/">{label}</a>')
     return html
