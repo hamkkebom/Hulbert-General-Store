@@ -127,7 +127,7 @@ except FileNotFoundError:
 site_dir = os.path.join(ROOT, "_site")
 if os.path.isdir(site_dir):
     leak_re = re.compile(r'@?\[\s*[^\]]*(?:TBD|인스타|지원폼|상세 주소|운영 시간|이메일 주소|연락처)[^\]]*\]')
-    memo_re = re.compile(r'\[사진 자리|캡션 예시|\[[^\]\n]{0,30}→\s*/[a-z]+\s*\]|\(\d차 CTA\)|(?<![A-Za-z])TBD(?![A-Za-z])')
+    memo_re = re.compile(r'\[사진 자리|캡션 예시|〔|\[ ?(?:텍스트|한 문장|링크|직접) ?입력|\[[^\]\n]{0,30}→\s*/[a-z]+\s*\]|\(\d차 CTA\)|(?<![A-Za-z])TBD(?![A-Za-z])')
     for p in glob.glob(os.path.join(site_dir, "**", "*.html"), recursive=True):
         if "/viewer/" in p.replace("\\", "/"):
             continue  # 내부 뷰어는 원문 편집기라 예외

@@ -31,6 +31,12 @@ python3 tools/harness_check.py # 콘텐츠 일관성 하네스(문서 규칙 검
 3. **보이스**: '모시다/모심/모시겠습니다' **금지**, 항상 '함께'. 미확정 정보는 `예시`/`TBD`. 과장·강매 톤 금지. (정본: [`docs/브랜드-정의서.md`](docs/브랜드-정의서.md))
 4. **미확정 값은 대괄호로 공개 노출 금지** — 사이트는 `준비 중`으로 렌더(`site/config.json` 단일 변수). 법률 미검토 초안엔 '초안·법적 효력 없음' 표기.
 
+## 공개 사이트 렌더 규칙 (site/build_site.py)
+- **색은 `site/assets/style.css`의 `:root` 변수에서만** 바꾼다(백자 팔레트). 본문에 색 값을 하드코딩하지 않는다. 디자인 정본은 `docs/디자인-가이드.md`.
+- 문서의 운영자·디자이너용 표기(`〔버튼〕`, 입력란 표기, 꼭지 번호 ①②③, 이모지, `[사진 자리 …]`)는 **문서에 그대로 두고** `public_clean()`·`transform()`이 공개 렌더에서 걷어낸다. 새 패턴이 새면 거기에 추가하고 하네스 누출 검사(`memo_re`)에도 넣는다.
+- 사진은 `site/assets/img/` — 현재 전부 **임시 CC0 사진**(출처 `CREDITS.md`). 교체는 같은 파일명 덮어쓰기. 문서의 사진 자리↔파일 매핑은 `SLOT_IMG`, 작가 예시 카드는 `MAKER_IMG`.
+- 화면 확인은 헤드리스 Chrome 캡처로(모바일은 390px iframe 래퍼) — 앱 브라우저 창이 가려지면 스크롤 캡처가 멈춘다.
+
 ## 새 문서를 추가할 때 (3곳 등록 필수 — 안 하면 하네스 실패)
 > 가장 쉬운 방법: **`/new-doc` 슬래시 커맨드** 또는 스캐폴더 —
 > `python3 tools/new_doc.py docs/X.md --title "제목" --group E --badge 📝 --role "역할"`
@@ -42,7 +48,8 @@ python3 tools/harness_check.py # 콘텐츠 일관성 하네스(문서 규칙 검
 5. `python3 viewer/build.py && python3 site/build_site.py && python3 tools/harness_check.py`로 검증.
 
 ## Git / PR 워크플로
-- 작업 브랜치: `claude/project-performance-optimization-hcmrqx`. 머지된 PR 뒤 후속 작업은 **최신 `main`에서 브랜치 재시작**.
+- 저장소: `hamkkebom/Hulbert-General-Store` (2026-11 이전 — 옛 `dokkaebimarketing1-lang` 사본은 쓰지 않음). 사이트: https://hamkkebom.github.io/Hulbert-General-Store/
+- 작업 브랜치: 작업마다 **최신 `main`에서 `claude/<주제>`** 로 새로 딴다.
 - 드래프트 PR로 열고 → Ready 전환 → 머지. 커밋·PR 본문에 모델 식별자 넣지 않음.
 - 문서 수정 후 **뷰어/사이트 재빌드 산출물(`viewer/index.html`·`sources.json`)을 함께 커밋**.
 

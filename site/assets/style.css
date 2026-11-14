@@ -345,6 +345,7 @@ span.tbd:empty::after{content:"준비 중"}
 .ghost-btn{border-width:1px}
 .f-brand{font-weight:700;font-size:1.05rem}
 
+.req{display:inline-block;font-family:"Pretendard Variable",Pretendard,sans-serif;font-size:.7em;font-weight:700;color:var(--dancheong);border:1px solid var(--dancheong);border-radius:999px;padding:.05em .6em;vertical-align:.2em;margin-left:.3em}
 /* ── 푸터 · sticky CTA ── */
 .foot{border-top:1px solid var(--line);text-align:center;padding:48px 24px 120px;color:var(--muted);font-size:.88rem}
 .f-brand{color:var(--ink);font-weight:800;font-size:1rem}
@@ -384,6 +385,9 @@ span.tbd:empty::after{content:"준비 중"}
   .mnav a{padding:12px 0;border-bottom:1px solid var(--line);color:var(--ink);font-weight:600}
   .mnav a:last-child{border-bottom:none;color:var(--dancheong)}
   .mk-grid{grid-template-columns:1fr}
+  /* 좁은 화면: 표 첫 칸도 줄바꿈 허용(잘림 방지) */
+  .prose td:first-child{white-space:normal;padding-right:14px;min-width:6.5em}
+  .prose th,.prose td{padding-right:12px}
   /* 홈 매거진형 — 한 단으로 */
   .mz-wrap{padding:0 20px}
   .mz-sec{padding:64px 0}
