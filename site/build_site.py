@@ -270,7 +270,10 @@ GLOBAL_JS = """<script>
   var mtoc=document.querySelector('.pagetoc-m');
   if(mtoc){[].slice.call(mtoc.querySelectorAll('a')).forEach(function(a){
     a.addEventListener('click',function(){mtoc.open=false;});});}
-  var els=[].slice.call(document.querySelectorAll('.reveal'));
+  // 묶음 단위 등장 효과: 스크립트가 켜진 경우에만 .rv를 붙인다(꺼져 있으면 처음부터 다 보임)
+  [].slice.call(document.querySelectorAll('.mz-three,.mz-steps,.mz-quotes,.mz-figs,.mz-lines.flip,.mz-fig,.mz-faq,.photo-fig,.page-next,.mk-grid'))
+    .forEach(function(e){e.classList.add('rv');});
+  var els=[].slice.call(document.querySelectorAll('.reveal,.rv'));
   var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(rm||!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
   var io=new IntersectionObserver(function(en){en.forEach(function(x){
