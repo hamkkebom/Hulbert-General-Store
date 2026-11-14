@@ -498,3 +498,21 @@ p,li{text-wrap:pretty}
   .foot{padding:48px 0 140px}
   .foot-in{grid-template-columns:1fr;gap:32px;padding:0 20px}
 }
+
+/* ── 다듬기 3: 맺음 구역 · 바닥글 · 체크 칸 · 합류 여정 사진 ── */
+.mz-join{background:var(--tint)}
+.mz-jar{box-shadow:0 0 0 6px var(--paper),0 0 0 7px var(--line)}
+.foot{padding-bottom:40px}
+.foot-base{max-width:var(--wide);margin:56px auto 0;padding:22px 32px 0;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:16px;font-size:.82rem;color:var(--muted)}
+.foot-base a{color:var(--ink);font-weight:600}
+.prose li.chk{list-style:none;position:relative;margin-left:-1.2em;padding-left:1.9em}
+.prose li.chk::before{content:"";position:absolute;left:0;top:.42em;width:1.05em;height:1.05em;
+  border:1.5px solid var(--muted);border-radius:3px;background:var(--card)}
+@media (min-width:861px){
+  .mz-fig.tall img{aspect-ratio:1/1;object-position:50% 100%}
+}
+@media (max-width:860px){
+  .foot{padding-bottom:120px}
+  .foot-base{padding:20px 20px 0;margin-top:36px}
+}
