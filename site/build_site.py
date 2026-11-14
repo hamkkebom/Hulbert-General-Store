@@ -153,8 +153,11 @@ NOLINK = "#__nolink__"
 # 문서의 📷 사진 자리(등장 순서)에 넣을 임시 사진 — None이면 "사진 준비 중" 자리 유지.
 # 실제 사진을 받으면 site/assets/img/의 같은 파일명으로 덮어쓴다(출처: CREDITS.md).
 SLOT_IMG = {
-    "docs/pages/공간소개.md": ["hanok-gate.jpg", None, "celadon-bottles.jpg", None, "alley.jpg"],
+    "docs/pages/공간소개.md": ["courtyard.jpg", "maru.jpg", "on-chest.jpg", "price-tags.jpg", "alley.jpg"],
 }
+# AI로 생성한 연출 이미지 — 실제 촬영본으로 덮어쓴 파일은 여기서 빼면 표기가 사라진다.
+GENERATED = {"courtyard.jpg", "hands-setting.jpg", "stalls.jpg", "interior.jpg", "jar.jpg",
+             "maru.jpg", "on-chest.jpg", "price-tags.jpg", "maker-pottery.jpg"}
 
 def transform(html, slot_imgs=()):
     # 📷 사진 자리 블록 → 스타일된 플레이스홀더
@@ -171,7 +174,7 @@ def transform(html, slot_imgs=()):
         if fn:
             cap_html = f"{cap} " if cap else ""
             return (f'<figure class="photo-fig"><img src="../assets/img/{fn}" alt="{htmllib.escape(desc_txt)}" loading="lazy">'
-                    f'<figcaption>{cap_html}<span class="ps-ref">참고 이미지 · 실제 공간 사진으로 바뀝니다</span></figcaption></figure>')
+                    f'<figcaption>{cap_html}<span class="ps-ref">{"AI로 만든 연출 이미지" if fn in GENERATED else "참고 이미지"} · 실제 공간 사진으로 바뀝니다</span></figcaption></figure>')
         cap_html = f'<span class="ps-cap">{cap}</span>' if cap else ""
         return ('<figure class="photo-slot">'
                 f'<figcaption><span class="ps-wait">사진 준비 중 — {desc_txt}</span>{cap_html}</figcaption></figure>')
@@ -359,8 +362,8 @@ def home_body(root):
       </div>
     </div>
     <figure class="mz-cover">
-      <img src="{img}hanok-gate.jpg" alt="기와지붕 아래 나무 대문이 있는 한옥 골목" width="1920" height="1280" fetchpriority="high">
-      <figcaption>사진은 분위기를 보여 주는 참고 이미지입니다 — 실제 공간 사진으로 바뀝니다.</figcaption>
+      <img src="{img}courtyard.jpg" alt="늦은 오후 빛이 드는 한옥 마당과 대청" width="1920" height="1097" fetchpriority="high">
+      <figcaption>AI로 만든 연출 이미지입니다 — 실제 공간 사진으로 바뀝니다.</figcaption>
     </figure>
     <dl class="mz-facts">
       <div><dt>입점비</dt><dd>0<span>원</span></dd></div>
@@ -390,7 +393,7 @@ def home_body(root):
 
 <section class="mz-sec mz-tint reveal">
   <div class="mz-wrap mz-split">
-    <figure class="mz-fig"><img src="{img}clay-hands.jpg" alt="작업대 위에서 흙을 빚는 두 손" width="1280" height="853" loading="lazy"></figure>
+    <figure class="mz-fig"><img src="{img}hands-setting.jpg" alt="고가구 위에 도자기를 내려놓는 두 손" width="1280" height="943" loading="lazy"></figure>
     <div>
       <p class="mz-label inline"><b>02</b>이름에 담은 뜻</p>
       <h2>한글을 사랑한 '헐버트'처럼,<br>작가를 뒤에서 받칩니다</h2>
@@ -447,13 +450,13 @@ def home_body(root):
         <li><b>나투사</b><p>'나에게 투자하는 사람들'. 회사의 진짜 주주. 한옥 고정비를 법인이 함께 집니다.</p></li>
       </ol>
     </div>
-    <figure class="mz-fig tall"><img src="{img}alley.jpg" alt="자전거가 기대어 선 한옥 골목" width="960" height="1443" loading="lazy"></figure>
+    <figure class="mz-fig tall"><img src="{img}stalls.jpg" alt="대청에서 내다본 마당에 매대가 차려진 모습" width="914" height="1143" loading="lazy"></figure>
   </div>
 </section>
 
 <section class="mz-sec mz-tint reveal">
   <div class="mz-wrap">
-    <figure class="mz-fig banner"><img src="{img}celadon-bottles.jpg" alt="청자빛 유약을 입은 도자 병들" width="1920" height="1280" loading="lazy"></figure>
+    <figure class="mz-fig banner"><img src="{img}interior.jpg" alt="도자기와 소반이 놓인 한옥 대청마루" width="1920" height="1097" loading="lazy"></figure>
     <div class="mz-cols">
       <p class="mz-label"><b>06</b>어떤 작품이든</p>
       <div class="mz-body wide">
@@ -510,7 +513,7 @@ def home_body(root):
 
 <section class="mz-join reveal">
   <div class="mz-wrap">
-    <img class="mz-jar" src="{img}moon-jar.jpg" alt="나무 선반 위에 놓인 백자 달항아리" width="960" height="640" loading="lazy">
+    <img class="mz-jar" src="{img}jar.jpg" alt="고가구 위에 놓인 백자 한 점" width="720" height="720" loading="lazy">
     <p class="mz-kicker center">거창한 서류는 없습니다. 세 가지만 보내주세요.</p>
     <ol class="mz-three-ask">
       <li>작품 사진 3~5장</li><li>"당신의 꿈" 한 문장</li><li>불리고 싶은 한글 이름</li>
@@ -568,7 +571,7 @@ def makers_body(root):
 <div class="prose">
   <p>헐버트작가촌은 나이도 학벌도 묻지 않습니다. 가장 먼저 묻는 건 하나예요 — <strong>"당신의 꿈은 무엇인가요?"</strong><br>
   그 꿈을 담은 한글 이름으로 서로를 부르고, 경복궁 옆 서촌 한옥 마루 위에 각자의 작품을 나란히 올립니다.</p>
-  <div class="notice">지금 보이는 카드와 사진은 <strong>분위기를 보여주기 위한 가상 예시</strong>입니다. 첫 작가들이 입점하면 진짜 얼굴로 바뀝니다. (장르 필터는 '가르기'가 아니라 <strong>찾기 편하라고</strong> 두는 장치예요 — 한옥에 어울리면 장르 불문입니다.)</div>
+  <div class="notice">지금 보이는 카드와 사진은 <strong>분위기를 보여주기 위한 가상 예시</strong>입니다(사진은 무료 사진과 AI 연출 이미지). 첫 작가들이 입점하면 진짜 얼굴로 바뀝니다. (장르 필터는 '가르기'가 아니라 <strong>찾기 편하라고</strong> 두는 장치예요 — 한옥에 어울리면 장르 불문입니다.)</div>
 </div>
 <div class="mk-filter" role="group" aria-label="장르 필터">{chips}</div>
 <div class="mk-grid" id="mkGrid">{cards}
