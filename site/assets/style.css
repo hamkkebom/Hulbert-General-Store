@@ -606,3 +606,20 @@ p,li{text-wrap:pretty}
 @media (prefers-reduced-motion:reduce){.pn-arrow{transition:none}}
 .page-band.wide .page-band-in{max-width:var(--wide);padding-left:24px}
 .page-band.wide h1{max-width:15em}
+
+/* ── 다듬기 5: 홈 01 뒤집힌 규칙 · 03 큰 숫자말 · 맺음 먹색 띠 ── */
+.mz-lines.flip li{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.mz-lines.flip s{color:var(--muted);font-weight:500;text-decoration-color:var(--dancheong);text-decoration-thickness:1.5px}
+.mz-lines.flip b{font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-size:1.3rem;font-weight:700;color:var(--ink);white-space:nowrap}
+.mz-three .mz-num{display:block;font-size:2.1rem;line-height:1.2;color:var(--dancheong);margin-bottom:16px}
+.mz-three>div{padding-top:24px}
+.mz-three h3{font-size:1.32rem}
+.mz-join{background:var(--band);color:var(--band-text);border-top:none}
+.mz-join .mz-kicker{color:var(--band-keep)}
+.mz-join .mz-ask{color:var(--paper)}
+.mz-join .mz-three-ask{color:var(--band-text)}
+.mz-join .mz-three-ask li+li::before{color:var(--band-accent)}
+.mz-join .cta-btn{background:var(--paper);color:var(--ink)}
+.mz-join .cta-btn:hover{background:var(--band-keep);color:var(--ink)}
+.mz-jar{box-shadow:0 0 0 6px var(--band),0 0 0 7px var(--band-line)}
+.home+.foot,.home~.foot{border-top-color:var(--band)}
