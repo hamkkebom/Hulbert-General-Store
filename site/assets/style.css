@@ -542,3 +542,31 @@ p,li{text-wrap:pretty}
   .mk-photo img,.mk-plus{transition:none}
   .mk-card:hover .mk-photo img,.mk-next:hover .mk-plus{transform:none}
 }
+
+/* ── 첫 화면: 먹색 판 + 사진 두 단 ── */
+.mz-hero.hx{padding:0}
+.hx-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);min-height:min(68vh,620px);
+  background:var(--band);color:var(--band-text)}
+.hx-text{display:flex;flex-direction:column;justify-content:center;
+  padding:72px 40px 76px max(32px,calc((100vw - var(--wide)) / 2 + 32px))}
+.hx .mz-kicker{color:var(--band-keep);margin-bottom:30px}
+.hx h1{color:var(--paper);font-size:clamp(2.5rem,4.3vw,4.3rem);line-height:1.22}
+.hx .lede{color:var(--band-text);font-size:1.14rem;line-height:1.85;max-width:29em;margin:30px 0 36px}
+.hx .lede strong{color:var(--paper)}
+.hx .cta-btn{background:var(--paper);color:var(--ink)}
+.hx .cta-btn:hover{background:var(--band-keep);color:var(--ink)}
+.hx .mz-link{color:var(--paper);border-color:var(--paper)}
+.hx .mz-link:hover{color:var(--band-accent);border-color:var(--band-accent)}
+.hx-photo{margin:0;position:relative;min-height:340px;overflow:hidden}
+.hx-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hx-photo figcaption{position:absolute;right:14px;bottom:12px;font-size:.74rem;color:var(--paper);
+  background:color-mix(in srgb,var(--band) 64%,transparent);padding:4px 10px;border-radius:3px}
+.hx .mz-facts{margin-top:0;border-top:none}
+@media (max-width:860px){
+  .mz-hero.hx{padding:0}
+  .hx-grid{grid-template-columns:1fr;min-height:0}
+  .hx-text{padding:44px 20px 44px}
+  .hx h1{font-size:clamp(2.2rem,9.4vw,3rem)}
+  .hx .lede{font-size:1.06rem;margin:22px 0 28px}
+  .hx-photo{aspect-ratio:4/3;min-height:0}
+}

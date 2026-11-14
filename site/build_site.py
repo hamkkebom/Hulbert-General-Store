@@ -358,21 +358,21 @@ def home_body(root):
     return f"""
 <main class="home">
 
-<section class="mz-hero">
-  <div class="mz-wrap">
-    <p class="mz-kicker"><span class="dot-ac"></span>작가 모집 · 경복궁 옆 서촌 한옥</p>
-    <div class="mz-hero-grid">
+<section class="mz-hero hx">
+  <div class="hx-grid">
+    <div class="hx-text">
+      <p class="mz-kicker"><span class="dot-ac"></span>작가 모집 · 경복궁 옆 서촌 한옥</p>
       <h1>잃을 걱정 없이,<br>하고 싶은 창작만.</h1>
-      <div class="mz-hero-side">
-        <p class="lede">입점비도, 자릿세도 없습니다. 안 팔린 달엔 한 푼도 내지 않습니다. 그리고 끝내 — <strong>함께 회사의 주인이 됩니다.</strong></p>
-        <p class="hero-cta"><a class="cta-btn big" href="{root}apply/">합류하기</a>
-        <a class="mz-link" href="#why">3분 만에 이해하기 ↓</a></p>
-      </div>
+      <p class="lede">입점비도, 자릿세도 없습니다. 안 팔린 달엔 한 푼도 내지 않습니다. 그리고 끝내 — <strong>함께 회사의 주인이 됩니다.</strong></p>
+      <p class="hero-cta"><a class="cta-btn big" href="{root}apply/">합류하기</a>
+      <a class="mz-link" href="#why">3분 만에 이해하기 ↓</a></p>
     </div>
-    <figure class="mz-cover">
+    <figure class="hx-photo">
       <img src="{img}courtyard.jpg" alt="소나무가 선 한옥 마당과 본채" width="900" height="502" fetchpriority="high">
-      <figcaption>서촌 한옥 '함께봄'의 마당 — 실제 사진입니다.</figcaption>
+      <figcaption>서촌 한옥 '함께봄'의 마당 — 실제 사진</figcaption>
     </figure>
+  </div>
+  <div class="mz-wrap">
     <dl class="mz-facts">
       <div><dt>입점비</dt><dd>0<span>원</span></dd></div>
       <div><dt>매달 자릿세</dt><dd>0<span>원</span></dd></div>
