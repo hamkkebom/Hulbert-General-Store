@@ -270,6 +270,9 @@ MAKERS_JS = """<script>
 })();
 </script>"""
 
+# 내부 페이지 제목 위 작은 표지
+KICKER = dict(NAV, policy="운영 규칙", apply="합류")
+
 def layout(slug, title, desc, body, root):
     active = lambda s: ' class="on"' if s == slug else ""
     nav = "".join(f'<a href="{root}{s}/"{active(s)}>{label}</a>' for s, label in NAV)
@@ -285,6 +288,7 @@ def layout(slug, title, desc, body, root):
 <title>{htmllib.escape(title)}</title>
 <meta name="description" content="{htmllib.escape(desc)}">
 <link rel="canonical" href="{canonical}">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23161513'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23C2452D'/%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{htmllib.escape(title)}">
 <meta property="og:description" content="{htmllib.escape(desc)}">
@@ -311,10 +315,17 @@ def layout(slug, title, desc, body, root):
 {GLOBAL_JS}
 {MAKERS_JS if slug == 'makers' else ''}
 <footer class="foot">
-  <p class="f-brand">헐버트작가촌 <span class="sep">·</span> 경복궁 옆 서촌 한옥</p>
-  <p class="f-line">잃을 걱정 없이, 하고 싶은 창작만 — 잘 팔리면 복지로 보답하고, 끝내 함께 주인이 된다.</p>
-  <p class="f-note">이름 '헐버트'는 한글을 사랑하고 한국 독립을 도운 호머 헐버트 박사(1863~1949)를 기리는 뜻에서 따왔으며, 특정 단체와의 제휴를 뜻하지 않습니다.</p>
-  <p class="f-legal">사업자 정보 · 개인정보처리방침 · 이용약관 — <span class="tbd">법률 검토 후 게시 예정</span></p>
+  <div class="foot-in">
+    <div>
+      <p class="f-brand">헐버트작가촌</p>
+      <p class="f-line">경복궁 옆 서촌 한옥<br>잃을 걱정 없이, 하고 싶은 창작만 — 잘 팔리면 복지로 보답하고, 끝내 함께 주인이 된다.</p>
+    </div>
+    <nav class="foot-nav" aria-label="바닥 메뉴">{nav}<a href="{root}apply/">합류하기</a></nav>
+    <div>
+      <p class="f-note">이름 '헐버트'는 한글을 사랑하고 한국 독립을 도운 호머 헐버트 박사(1863~1949)를 기리는 뜻에서 따왔으며, 특정 단체와의 제휴를 뜻하지 않습니다.</p>
+      <p class="f-legal">사업자 정보 · 개인정보처리방침 · 이용약관 — <span class="tbd">법률 검토 후 게시 예정</span></p>
+    </div>
+  </div>
 </footer>
 {sticky}
 </body>
@@ -363,15 +374,16 @@ def home_body(root):
 <section class="mz-sec reveal">
   <div class="mz-wrap mz-cols">
     <p class="mz-label"><b>01</b>이야기의 시작</p>
-    <div class="mz-body">
+    <div class="mz-body wide">
       <h2>위탁 매장에 한 번쯤 데여보셨죠?</h2>
+      <div class="mz-duo">
       <ul class="mz-lines">
         <li>입점비 수십만 원</li>
         <li>매달 빠져나가는 자릿세</li>
         <li>안 팔리면 고스란히 내 손해</li>
-      </ul>
+      </ul><div>
       <p>그러다 <em>정말 하고 싶은 작품</em> 대신 <em>당장 돈이 되는 흔한 물건</em>만 만들게 되는 그 마음 —</p>
-      <p class="mz-pull">우리는 그 마음을 알기에,<br>규칙을 정반대로 짰습니다.</p>
+      <p class="mz-pull">우리는 그 마음을 알기에,<br>규칙을 정반대로 짰습니다.</p></div></div>
     </div>
   </div>
 </section>
@@ -409,10 +421,10 @@ def home_body(root):
     <div class="mz-body wide">
       <h2>돈 이야기, 가장 쉽게</h2>
       <p class="mz-sub">수수료가 '회사 주머니'로 가지 않습니다</p>
-      <div class="mz-flow">
-        <div class="mz-flow-src">작가님이 판 금액</div>
-        <div class="mz-flow-arm"><b>30%</b><span class="ex-badge">일반수수료</span><p>한옥 월세·관리비로 <strong>전액</strong> <span class="muted">(회사 마진 0)</span></p></div>
-        <div class="mz-flow-arm keep"><b>나머지</b><p><strong>작가님 지갑으로</strong></p></div>
+      <p class="mz-flow-cap">작가님이 판 금액</p>
+      <div class="mz-figs">
+        <div><b>30<i>%</i></b><span class="ex-badge">일반수수료</span><p>한옥 월세·관리비로 <strong>전액</strong> <span class="muted">(회사 마진 0)</span></p></div>
+        <div class="keep"><b>나머지</b><p><strong>작가님 지갑으로</strong></p></div>
       </div>
       <ul class="mz-lines on-ink">
         <li><strong>안 팔린 달엔?</strong> 낼 돈이 없습니다.</li>
@@ -603,7 +615,7 @@ def build():
                     banner = ('<div class="notice"><strong>지원 접수는 곧 열립니다.</strong> '
                               '아래는 신청 시 여쭤볼 내용의 미리보기예요 — 채널이 열리는 대로 이 자리에서 바로 신청하실 수 있습니다.</div>')
             mtoc = pagetoc_mobile(headings)
-            main_html = (f'<main class="page"><header class="page-head"><h1>{h1}</h1></header>'
+            main_html = (f'<main class="page"><header class="page-head"><p class="mz-kicker"><span class="dot-ac"></span>{KICKER.get(slug, "헐버트작가촌")}</p><h1>{h1}</h1></header>'
                          f'{mtoc}<div class="prose">{banner}{inner}</div></main>')
             toc = pagetoc_aside(headings)
             body = f'<div class="doc-layout">{toc}{main_html}</div>' if toc else main_html
