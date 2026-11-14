@@ -635,3 +635,12 @@ p,li{text-wrap:pretty}
 .prose h3{font-size:1.22rem;line-height:1.5;color:var(--ink)}
 .p-contact .prose h3,.p-news .prose h3{border-top:1px solid var(--line);padding-top:1.5em;margin-top:1.7em}
 .p-contact .prose h2+h3,.p-news .prose h2+h3{border-top:none;padding-top:0;margin-top:1.2em}
+
+/* ── 다듬기 7: 인터뷰 문답 · 모바일 표 첫 칸 ── */
+.prose p.qa{margin:1.6em 0 0;padding-top:1.3em;border-top:1px solid var(--line)}
+.prose p.qa strong{display:block;font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-size:1.14rem;line-height:1.5;
+  color:var(--ink);margin-bottom:.45em}
+.prose p.qa strong::before{content:"Q";color:var(--dancheong);margin-right:.5em}
+@media (max-width:860px){
+  .prose table td:first-child,.prose table th:first-child{white-space:nowrap}
+}
