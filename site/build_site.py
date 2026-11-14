@@ -58,12 +58,56 @@ def flatten_toc(tokens):
         out.extend(flatten_toc(t.get("children", [])))
     return out
 
+# ──────────────────────────── 공개용 정리 (문서 원본은 그대로 두고 렌더 단계에서만) ────────────────────────────
+# 문서에는 운영자·디자이너용 표기(〔버튼〕, `[ 텍스트 입력 ]`, 꼭지 번호 ①②③, 이모지)가 섞여 있다.
+# 뷰어에서는 유효한 작업 메모지만, 공개 페이지에선 내부 메모로 보이므로 여기서 걷어낸다.
+PAGE_H1 = {
+    "docs/작가-가이드.md": "작가 가이드",
+    "docs/작가촌-아카데미.md": "헐버트 아카데미",
+    "docs/작가촌-매거진.md": "작가 이야기",
+}
+PAGE_TWEAKS = {
+    "docs/pages/소식.md": [
+        (r"^## ① 인트로\n", ""),
+        (r"^## ② 게시물 유형\n", "## 소식의 종류\n"),
+        (r"^> 글머리에.*\n", ""),
+        (r"^\| 유형 배지 \| 무엇을 올리나 \| 주요 독자 \|", "| 종류 | 무엇을 올리나 | 누구에게 |"),
+        (r"^## ③ 예시 게시물 2개\n", "## 최근 소식 `예시`\n"),
+        (r"^### 게시물 \d+ — 〔([^〕]+)〕 \(예시\)\n", r"### \1 `예시`\n"),
+        (r"^> 톤은 작가 모집 키트.*\n", ""),
+        (r"^`〔[^〕]+〕` · 예시 날짜: .*\n", ""),
+    ],
+    "docs/작가촌-매거진.md": [
+        (r"^> 📌 인터뷰 한 줄 인용은.*\n", ""),
+        (r"^> 코너:.*\n", ""),
+    ],
+}
+EMOJI_RE = re.compile("[\U0001F300-\U0001FAFF☀-➿⭐️‍]+[ \t]?")
+
+def public_clean(path, body):
+    for pat, rep in PAGE_TWEAKS.get(path, []):
+        body = re.sub(pat, rep, body, flags=re.M)
+    # UI 설계 표기만 있는 줄, 입력란 표기
+    body = re.sub(r"^〔(?:라벨|필터 칩|버튼)〕.*\n", "", body, flags=re.M)
+    body = re.sub(r"[ \t]*`\[[^\]`\n]*(?:입력|첨부)[^\]`\n]*\]`", "", body)
+    body = re.sub(r"[〔〕]", "", body)
+    # 필수 표시: 별 이모지 → '필수' 배지
+    body = body.replace("별표(⭐)는 필수 항목입니다", "'필수' 표시가 붙은 항목만 꼭 채워주세요")
+    body = re.sub(r"[ \t]*⭐", " `필수`", body)
+    # 제목 앞 꼭지 번호·대괄호 꼬리표
+    body = re.sub(r"^(#{2,3}) [①-⑳]\s*", r"\1 ", body, flags=re.M)
+    body = re.sub(r"^(#{2,3}) \[([^\]\n]+)\]\s*", r"\1 \2 — ", body, flags=re.M)
+    # 문단 바로 아래 붙은 목록이 한 줄로 뭉치지 않게 빈 줄 삽입
+    body = re.sub(r"^(?![-*] |\d+\. |>|\||#|\s|`{3})([^\n]+)\n(?=[-*] |\d+\. )", r"\1\n\n", body, flags=re.M)
+    return body
+
 def render_md(path):
     with open(os.path.join(ROOT, path), encoding="utf-8") as f:
         text = f.read()
     # 상단 메타(제목 배지·페이지 노트)는 내부용 — 첫 '---' 전까지 제거, 제목만 유지
     m = re.match(r"# (.+)\n", text)
     page_h1 = re.sub(r"\s*\(/[a-z]+\)\s*$", "", m.group(1)).strip() if m else ""
+    page_h1 = PAGE_H1.get(path, page_h1)
     first_hr = text.find("\n---\n")
     body = text[first_hr + 5:] if first_hr != -1 else text
     # 운영자용·내부 섹션 제거(공개 페이지엔 노출 금지) — 가장 먼저 나오는 지점에서 자름
@@ -71,6 +115,7 @@ def render_md(path):
     body = re.split(r"\n#{2,3} [^\n]*운영자", body)[0]
     body = re.split(r"\n#{2,3} [^\n]*게시 가이드", body)[0]
     body = re.split(r"\n## ④ 운영 가이드.*", body)[0]
+    body = public_clean(path, body)
     md = markdown.Markdown(
         extensions=["extra", "toc", "sane_lists", "attr_list"],
         extension_configs={"toc": {"slugify": gh_slug, "separator": "-"}},
@@ -79,6 +124,8 @@ def render_md(path):
     # 제목 앵커(h2·h3) 목록 — 좌측 목차(TOC)용. 뷰어와 동일하게 2개 이상일 때만.
     headings = [(lvl, hid, name) for lvl, hid, name in flatten_toc(md.toc_tokens) if lvl in (2, 3)]
     html = transform(html, SLOT_IMG.get(path, ()))
+    html = EMOJI_RE.sub("", html).replace("<code>필수</code>", '<span class="req">필수</span>')
+    headings = [(lvl, hid, EMOJI_RE.sub("", name).strip()) for lvl, hid, name in headings]
     return page_h1, html, headings
 
 def _toc_links(headings):
