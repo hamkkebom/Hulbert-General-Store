@@ -583,6 +583,12 @@ def makers_body(root):
 </div>
 <div class="mk-filter" role="group" aria-label="장르 필터">{chips}</div>
 <div class="mk-grid" id="mkGrid">{cards}
+    <a class="mk-next" href="{root}apply/">
+      <span class="mk-next-box"><span class="mk-plus" aria-hidden="true">+</span></span>
+      <span class="mk-genre">다음 동료</span>
+      <strong>여기는 당신의 자리</strong>
+      <span class="mk-next-line">작품 사진 몇 장과 꿈 한 문장이면 됩니다. 합류 신청하기 →</span>
+    </a>
   <p class="mk-empty" hidden>해당 장르의 동료는 아직 준비 중이에요. 다음 주인공이 당신일 수 있어요.</p>
 </div>
 <section class="join">
