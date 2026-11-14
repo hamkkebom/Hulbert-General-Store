@@ -623,3 +623,15 @@ p,li{text-wrap:pretty}
 .mz-join .cta-btn:hover{background:var(--band-keep);color:var(--ink)}
 .mz-jar{box-shadow:0 0 0 6px var(--band),0 0 0 7px var(--band-line)}
 .home+.foot,.home~.foot{border-top-color:var(--band)}
+
+/* ── 다듬기 6: 본문 — 단계 흐름 · 소제목 · 질문 목록 ── */
+.prose ol.flow{list-style:none;padding:0;margin:1.4em 0 .6em;display:flex;flex-wrap:wrap;gap:12px 0;counter-reset:flow}
+.prose ol.flow li{counter-increment:flow;display:flex;align-items:baseline;margin:0;font-weight:700;color:var(--ink)}
+.prose ol.flow li::before{content:counter(flow);font-family:"Noto Serif KR","Nanum Myeongjo",serif;font-size:1.15rem;
+  color:var(--dancheong);margin-right:.45em}
+.prose ol.flow li:not(:last-child)::after{content:"→";font-weight:400;color:var(--muted);margin:0 .9em}
+.prose ol.flow li.opt{color:var(--muted);font-weight:500}
+.prose .flow-opt{margin:0 0 1.2em;padding:12px 16px;background:var(--soft);border-left:2px solid var(--celadon);font-size:.98rem}
+.prose h3{font-size:1.22rem;line-height:1.5;color:var(--ink)}
+.p-contact .prose h3,.p-news .prose h3{border-top:1px solid var(--line);padding-top:1.5em;margin-top:1.7em}
+.p-contact .prose h2+h3,.p-news .prose h2+h3{border-top:none;padding-top:0;margin-top:1.2em}
