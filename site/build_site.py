@@ -402,10 +402,10 @@ def home_body(root):
     <div class="mz-body wide">
       <h2>위탁 매장에 한 번쯤 데여보셨죠?</h2>
       <div class="mz-duo">
-      <ul class="mz-lines">
-        <li>입점비 수십만 원</li>
-        <li>매달 빠져나가는 자릿세</li>
-        <li>안 팔리면 고스란히 내 손해</li>
+      <ul class="mz-lines flip">
+        <li><s>입점비 수십만 원</s><b>0원</b></li>
+        <li><s>매달 빠져나가는 자릿세</s><b>0원</b></li>
+        <li><s>안 팔리면 고스란히 내 손해</s><b>안 팔린 달 0원</b></li>
       </ul><div>
       <p>그러다 <em>정말 하고 싶은 작품</em> 대신 <em>당장 돈이 되는 흔한 물건</em>만 만들게 되는 그 마음 —</p>
       <p class="mz-pull">우리는 그 마음을 알기에,<br>규칙을 정반대로 짰습니다.</p></div></div>
